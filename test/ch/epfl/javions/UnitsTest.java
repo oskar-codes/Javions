@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnitsTest {
     private static final double DELTA = 1e-7;
 
-
     @Test
     void unitConvertWorksOnSomeUnits() {
         var actual1 = Units.convert(2.34, Units.Angle.TURN, Units.Angle.DEGREE);
