@@ -20,7 +20,7 @@ public class Bits {
      * @throws IndexOutOfBoundsException if the range [start, size] is not included in [0, 63]
      */
     public static int extractUInt(long value, int start, int size) {
-        // checkIndex throws IndexOutOfBoundsException, but we want an IllegalArgumentException so we catch and immediately throw
+        // checkIndex throws IndexOutOfBoundsException, but we want an IllegalArgumentException, so we catch and immediately throw
         try {
             Objects.checkIndex(size, Integer.SIZE);
         } catch (IndexOutOfBoundsException e) {

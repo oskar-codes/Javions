@@ -50,4 +50,18 @@ class BitsTest {
             }
         }
     }
+
+    @Test
+    void bitsTestBitWorks() {
+        int v1 = 0b1;
+        assertTrue(Bits.testBit(v1, 0));
+        assertFalse(Bits.testBit(v1, 1));
+
+        int v2 = 0b10010;
+        assertFalse(Bits.testBit(v2, 0));
+        assertTrue(Bits.testBit(v2, 1));
+        assertFalse(Bits.testBit(v2, 2));
+        assertFalse(Bits.testBit(v2, 3));
+        assertTrue(Bits.testBit(v2, 4));
+    }
 }
