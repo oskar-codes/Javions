@@ -2,11 +2,11 @@ package ch.epfl.javions.aircraft;
 
 import java.util.regex.Pattern;
 
-public record IcaoAddress(String str) {
+public record IcaoAddress(String string) {
     static final Pattern pattern = Pattern.compile("[0-9A-F]{6}");
     public IcaoAddress {
-        if (!pattern.matcher(str).matches() || str.length() == 0) {
-            throw new IllegalArgumentException("Invalid ICAO str");
+        if (!pattern.matcher(string).matches() || string.length() == 0) {
+            throw new IllegalArgumentException("Invalid ICAO string");
         }
     }
 }

@@ -15,16 +15,16 @@ class AircraftDatabaseTest {
 
     @Test
     void get() throws IOException {
-        AircraftDatabase db = new AircraftDatabase("/aircraft.zip");
+        AircraftDatabase db = new AircraftDatabase("D:\\EPFL\\Cours\\BA2\\Prog\\Projets\\Javions\\resources\\aircraft.zip");
 
         assertThrows(NullPointerException.class, () -> db.get(null));
 
         AircraftData data = db.get(new IcaoAddress("009214"));
 
-        assertEquals("ZS-GVJ", data.registration().str());
-        assertEquals("SF25", data.typeDesignator().str());
+        assertEquals("ZS-GVJ", data.registration().string());
+        assertEquals("SF25", data.typeDesignator().string());
         assertEquals("SCHEIBE SF-25 Falke", data.model());
-        assertEquals("L1P", data.description().str());
+        assertEquals("L1P", data.description().string());
         assertEquals(WakeTurbulenceCategory.LIGHT, data.wakeTurbulenceCategory());
     }
 }
