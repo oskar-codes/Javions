@@ -2,6 +2,8 @@ package ch.epfl.javions;
 
 import java.util.Objects;
 
+import static ch.epfl.javions.Preconditions.checkArgument;
+
 /**
  * Utility class for bit operations
  * @author Eddy Rashed (360667)
@@ -27,7 +29,7 @@ public class Bits {
             throw new IllegalArgumentException("size must be strictly less than " + Integer.SIZE);
         }
         Objects.checkFromIndexSize(start, size, Long.SIZE);
-        if (size == 0) throw new IllegalArgumentException("size must be greater than 0");
+        checkArgument(size != 0);
 
         return (int)((value << (Long.SIZE - size - start)) >>> (Long.SIZE - size));
     }

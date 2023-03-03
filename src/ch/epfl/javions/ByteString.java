@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Objects;
 
+import static ch.epfl.javions.Preconditions.checkArgument;
+
 /**
  * Instanciable class for immutable byte strings
  * @author Eddy Rashed (360667)
@@ -61,9 +63,7 @@ public final class ByteString {
      */
     public long bytesInRange(int fromIndex, int toIndex) {
         Objects.checkFromToIndex(fromIndex, toIndex, size());
-        if (toIndex - fromIndex > Long.BYTES) {
-            throw new IllegalArgumentException("Range must not be longer than " + Long.BYTES + " bytes");
-        }
+        checkArgument(toIndex - fromIndex <= Long.BYTES);
         long result = 0;
         for (int i = fromIndex; i < toIndex; i++) {
             result = result << Byte.SIZE | byteAt(i);

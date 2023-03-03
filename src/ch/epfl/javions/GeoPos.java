@@ -1,5 +1,7 @@
 package ch.epfl.javions;
 
+import static ch.epfl.javions.Preconditions.checkArgument;
+
 /**
  * Record representing a geographical position
  * @author Eddy Rashed (360667)
@@ -13,7 +15,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      * @throws IllegalArgumentException if the latitude is not a valid latitude
      */
     public GeoPos {
-        if (!isValidLatitudeT32(latitudeT32)) throw new IllegalArgumentException("Invalid latitude");
+        checkArgument(isValidLatitudeT32(latitudeT32));
     }
 
     /**

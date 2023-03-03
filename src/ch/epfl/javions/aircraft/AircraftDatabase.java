@@ -5,12 +5,29 @@ import java.net.URLDecoder;
 import java.util.zip.ZipFile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Instantiable class that represents a database of aircrafts.
+ * @author Eddy Rashed (360667)
+ * @author Oskar Zanota (361595)
+ */
 public class AircraftDatabase {
+    // The absolute path of the zip file containing the database
     private final String fileName;
+
+    /**
+     * Constructs an AircraftDatabase object with the given file name.
+     * @param fileName - the absolute path of the zip file containing the database
+     */
     public AircraftDatabase(String fileName) {
         this.fileName = fileName;
     }
 
+    /**
+     * Returns the AircraftData corresponding to the given IcaoAddress.
+     * @param address - the IcaoAddress of the aircraft
+     * @return the AircraftData corresponding to the given IcaoAddress, found in the database. Returns null if the address is not found.
+     * @throws IOException if the file cannot be read
+     */
     public AircraftData get(IcaoAddress address) throws IOException {
         int query = Integer.parseInt(address.string(), 16);
         try (ZipFile z = new ZipFile(URLDecoder.decode(fileName, UTF_8))) {

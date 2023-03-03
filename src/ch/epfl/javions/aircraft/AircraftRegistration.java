@@ -2,11 +2,22 @@ package ch.epfl.javions.aircraft;
 
 import java.util.regex.Pattern;
 
+import static ch.epfl.javions.Preconditions.checkArgument;
+
+/**
+ * Record representing the registration of an aircraft.
+ * @author Eddy Rashed (360667)
+ * @author Oskar Zanota (361595)
+ */
 public record AircraftRegistration(String string) {
+    // The pattern for the registration of an aircraft
     static final Pattern pattern = Pattern.compile("[A-Z0-9 .?/_+-]+");
+
+    /**
+     * Constructs an AircraftRegistration object with the given string.
+     * @param string - the string representing the registration of an aircraft
+     */
     public AircraftRegistration {
-        if (!pattern.matcher(string).matches() || string.length() == 0) {
-            throw new IllegalArgumentException("Invalid Aircraft Registration");
-        }
+        checkArgument(pattern.matcher(string).matches() && string.length() != 0);
     }
 }

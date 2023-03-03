@@ -1,5 +1,7 @@
 package ch.epfl.javions;
 
+import static ch.epfl.javions.Preconditions.checkArgument;
+
 /**
  * Non instanciable utility class for mathematical operations
  * @author Eddy Rashed (360667)
@@ -17,7 +19,7 @@ public final class Math2 {
      * @throws IllegalArgumentException if min > max
      */
     public static int clamp(int min, int v, int max) {
-        if (min > max) throw new IllegalArgumentException("min must be less than or equal to max");
+        checkArgument(min <= max);
         return Math.max(Math.min(max, v), min);
     }
 
