@@ -10,7 +10,6 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 public final class SamplesDecoder {
     private final InputStream stream;
     private final int batchSize;
-    private byte[] buffer;
 
     public SamplesDecoder(InputStream stream, int batchSize) {
         checkArgument(batchSize > 0);
@@ -19,7 +18,6 @@ public final class SamplesDecoder {
         }
         this.stream = stream;
         this.batchSize = batchSize;
-        this.buffer = new byte[batchSize * 2];
     }
 
     int readBatch2(short[] batch) throws IOException {
