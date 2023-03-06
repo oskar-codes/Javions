@@ -1,5 +1,6 @@
-package ch.epfl.javions.demodulation;
+package ch.epfl.javions;
 
+import ch.epfl.javions.demodulation.SamplesDecoder;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;

@@ -48,7 +48,7 @@ public final class SamplesDecoder {
         return read;
     }
 
-    int readBatch(short[] batch) throws IOException {
+    public int readBatch(short[] batch) throws IOException {
         checkArgument(batch.length == batchSize);
         int read = 0;
         byte[] bytes = stream.readNBytes(Math.min(batchSize, stream.available()));

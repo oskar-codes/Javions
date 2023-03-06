@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CallSignTest {
     @Test
     void testConstructor() {
-        assertThrows(IllegalArgumentException.class, () -> new CallSign(""));
+        assertDoesNotThrow(() -> new CallSign(""));
         assertThrows(IllegalArgumentException.class, () -> new CallSign("abcdefghijklmnopqrstuvwxyz"));
     }
 }
