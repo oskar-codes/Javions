@@ -2,7 +2,6 @@ package ch.epfl.javions.demodulation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLOutput;
 import java.util.Arrays;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
@@ -18,8 +17,8 @@ public class PowerComputer {
     }
 
     private short get(short[] arr, int index) {
-        if (index + 8 < 0) return 0;
-        if (index < 0) return saved[8 + index];
+        if (index < -8) return 0;
+        if (index < 0) return saved[index + 8];
         return arr[index];
     }
 
@@ -31,6 +30,7 @@ public class PowerComputer {
         short[] result = new short[batchSize];
         int read = decoder.readBatch(result);
 
+        int affected = 0;
         for (int i = 1; i < read; i+=2) {
 
 //            System.out.println("####### " + i/2 + " #######");
@@ -39,19 +39,19 @@ public class PowerComputer {
 
             batch[(i - 1) / 2] = (int) (Math.pow(get(result, i - 6) - get(result, i - 4) + get(result, i - 2) - get(result, i), 2) +
                                 Math.pow(get(result, i - 7) - get(result, i - 5) + get(result, i - 3) - get(result, i - 1), 2));
+            affected++;
         }
 
-//        System.out.println(Arrays.toString(result));
         int start = Math.max(read - 8, 0);
         int count = read - start;
+
+        for (int i = 0; i < 8; i++) {
+            if (i - count >= 0) saved[i - count] = saved[i];
+        }
         for (int i = start; i < read; i++) {
             saved[8 - count + i - start] = result[i];
         }
 
-//        System.out.println(Arrays.toString(saved));
-
-
-
-        return read;
+        return affected;
     }
 }
