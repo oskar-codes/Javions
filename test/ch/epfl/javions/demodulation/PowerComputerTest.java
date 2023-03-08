@@ -14,11 +14,20 @@ class PowerComputerTest {
         DataInputStream stream = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream(new File("resources/samples.bin"))));
-        int size = 120;
+        int size = 16;
         PowerComputer computer = new PowerComputer(stream, size);
         int[] batch = new int[size];
-        computer.readBatch(batch);
 
+        System.out.println("#### ITERATION 1 ####");
+        computer.readBatch(batch);
+        System.out.println(Arrays.toString(batch));
+
+        System.out.println("\n#### ITERATION 2 ####");
+        computer.readBatch(batch);
+        System.out.println(Arrays.toString(batch));
+
+        System.out.println("\n#### ITERATION 3 ####");
+        computer.readBatch(batch);
         System.out.println(Arrays.toString(batch));
     }
 }

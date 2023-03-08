@@ -10,7 +10,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 public class PowerComputer {
     private final InputStream stream;
     private final int batchSize;
-    private int[] array = new int[8];
+    private final short[] saved = new short[8];
     public PowerComputer(InputStream stream, int batchSize) {
         checkArgument(batchSize % 8 == 0 && batchSize > 0);
         this.stream = stream;
@@ -18,7 +18,9 @@ public class PowerComputer {
     }
 
     private short get(short[] arr, int index) {
-        return index < 0 || index >= arr.length ? 0 : arr[index];
+        if (index + 8 < 0) return 0;
+        if (index < 0) return saved[8 + index];
+        return arr[index];
     }
 
     public int readBatch(int[] batch) throws IOException {
@@ -29,18 +31,26 @@ public class PowerComputer {
         short[] result = new short[batchSize];
         int read = decoder.readBatch(result);
 
-        System.out.println(Arrays.toString(result));
-
         for (int i = 1; i < read; i+=2) {
 
-            System.out.println("####### " + i/2 + " #######");
-            System.out.println(get(result, i - 6) + " - " + get(result, i - 4) + " + " + get(result, i - 2) + " - " + get(result, i));
-            System.out.println(get(result, i - 7) + " - " + get(result, i - 5) + " + " + get(result, i - 3) + " - " + get(result, i-1));
+//            System.out.println("####### " + i/2 + " #######");
+//            System.out.println(get(result, i - 7) + " - " + get(result, i - 5) + " + " + get(result, i - 3) + " - " + get(result, i-1));
+//            System.out.println(get(result, i - 6) + " - " + get(result, i - 4) + " + " + get(result, i - 2) + " - " + get(result, i));
 
-
-            batch[(i - 1)/2] = (int) (Math.pow(get(result, i - 6) - get(result, i - 4) + get(result, i - 2) - get(result, i), 2) +
+            batch[(i - 1) / 2] = (int) (Math.pow(get(result, i - 6) - get(result, i - 4) + get(result, i - 2) - get(result, i), 2) +
                                 Math.pow(get(result, i - 7) - get(result, i - 5) + get(result, i - 3) - get(result, i - 1), 2));
         }
+
+//        System.out.println(Arrays.toString(result));
+        int start = Math.max(read - 8, 0);
+        int count = read - start;
+        for (int i = start; i < read; i++) {
+            saved[8 - count + i - start] = result[i];
+        }
+
+//        System.out.println(Arrays.toString(saved));
+
+
 
         return read;
     }
