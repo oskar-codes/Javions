@@ -5,22 +5,45 @@ import java.io.InputStream;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
+/**
+ * Class that given a stream of bytes and a batch size, computes the power of the samples.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public class PowerComputer {
     private final InputStream stream;
     private final int batchSize;
     private final short[] saved = new short[8];
+
+    /**
+     * Constructor for the PowerComputer class
+     * @param stream - the stream of bytes to read from
+     * @param batchSize - the number of samples to read at once
+     */
     public PowerComputer(InputStream stream, int batchSize) {
         checkArgument(batchSize % 8 == 0 && batchSize > 0);
         this.stream = stream;
         this.batchSize = batchSize;
     }
 
+    /**
+     * Returns the value at the given index of the given array, or 0 if the index is out of bounds. If the index is negative, returns values from the saved array.
+     * @param arr - the array to get the value from
+     * @param index - the index of the value to get
+     * @return the value at the given index of the given array, or 0 if the index is out of bounds
+     */
     private short get(short[] arr, int index) {
         if (index < -8) return 0;
         if (index < 0) return saved[index + 8];
         return arr[index];
     }
 
+    /**
+     * Reads a batch of samples from the stream and computes the power of each sample.
+     * @param batch - the array to store the power of each sample in
+     * @return the number of samples read
+     * @throws IOException if an I/O error occurs
+     */
     public int readBatch(int[] batch) throws IOException {
         checkArgument(batch.length == batchSize);
 
