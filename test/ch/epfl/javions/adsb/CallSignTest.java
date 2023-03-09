@@ -1,4 +1,4 @@
-package ch.epfl.javions;
+package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.adsb.CallSign;
 import org.junit.jupiter.api.Test;

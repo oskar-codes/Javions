@@ -1,6 +1,7 @@
 package ch.epfl.javions.demodulation;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -19,16 +20,10 @@ class PowerComputerTest {
         PowerComputer computer = new PowerComputer(stream, size);
         int[] batch = new int[size];
 
-        System.out.println("#### ITERATION 1 ####");
         computer.readBatch(batch);
-        System.out.println(Arrays.toString(batch));
+        assertArrayEquals(new int[]{73, 292, 65, 745, 98, 4226, 12244, 25722}, batch);
 
-        System.out.println("\n#### ITERATION 2 ####");
         computer.readBatch(batch);
-        System.out.println(Arrays.toString(batch));
-
-        System.out.println("\n#### ITERATION 3 ####");
-        computer.readBatch(batch);
-        System.out.println(Arrays.toString(batch));
+        assertArrayEquals(new int[]{36818, 23825, 10730, 1657, 1285, 1280, 394, 521}, batch);
     }
 }
