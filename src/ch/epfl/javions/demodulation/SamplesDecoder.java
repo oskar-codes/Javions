@@ -23,9 +23,7 @@ public final class SamplesDecoder {
     int readBatch2(short[] batch) throws IOException {
         checkArgument(batch.length == batchSize);
         int read = 0;
-        byte[] bytes = stream.readNBytes(batchSize);
-        //  [7F,D3,45,AE,3F]
-        //  [7FD, 345, AE3]
+        byte[] bytes = stream.readNBytes(batchSize * 2);
 
         boolean even = false;
         for (int i = 0; i < batchSize; i++) {
@@ -49,7 +47,7 @@ public final class SamplesDecoder {
     public int readBatch(short[] batch) throws IOException {
         checkArgument(batch.length == batchSize);
         int read = 0;
-        byte[] bytes = stream.readNBytes(Math.min(batchSize, stream.available()));
+        byte[] bytes = stream.readNBytes(Math.min(batchSize * 2, stream.available()));
         String str = HexFormat.of().formatHex(bytes);
         String[] split = str.split("(?<=\\G.{4})");
         int i = 0;
