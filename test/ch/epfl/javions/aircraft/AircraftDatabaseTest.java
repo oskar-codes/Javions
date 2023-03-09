@@ -1,14 +1,11 @@
 package ch.epfl.javions.aircraft;
 
-import ch.epfl.javions.aircraft.AircraftData;
-import ch.epfl.javions.aircraft.AircraftDatabase;
-import ch.epfl.javions.aircraft.IcaoAddress;
-import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AircraftDatabaseTest {
     // TODO: write null test for constructor

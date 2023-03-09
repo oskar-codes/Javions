@@ -36,10 +36,10 @@ public class PowerWindow {
     }
 
     //                                 windowSize
-    //                      <---------------------------->
+    //                      <------------------------->
     // 0                position    2^16        i                 2^17
     // |                    |        |          |                  |
-    //                      [----------------------------]
+    //                      [------------------------]
     // [----------------------------][----------------------------]
     //            windowA                       windowB
     public int get(int i) {
@@ -48,13 +48,6 @@ public class PowerWindow {
         if (position + i > BATCH_SIZE) return windowB[(int) (i - (BATCH_SIZE - position))];
         return windowA[(int) (position + i)];
     }
-    //                                             windowSize
-    //                                      <---------------------->
-    // 0                            2^16 position                 2^17
-    // |                             |      |                      |
-    //                                     [----------------------]
-    // [----------------------------][----------------------------]
-    //            windowA                       windowB
     public void advance() throws IOException {
         position++;
         if (position + windowSize >= 2L * BATCH_SIZE) {

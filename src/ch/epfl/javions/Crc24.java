@@ -42,9 +42,7 @@ public final class Crc24 {
 
         // Calculates the augmented message, with three 0 bytes at the end
         byte[] augmented = new byte[message.length + 3];
-        for (int i = 0; i < message.length; i++) {
-            augmented[i] = message[i];
-        }
+        System.arraycopy(message, 0, augmented, 0, message.length);
         for (int i = 0; i < 3; i++) {
             augmented[message.length + i] = 0;
         }
@@ -69,9 +67,7 @@ public final class Crc24 {
     public int crc(byte[] message) {
         // Calculates the augmented message, with three 0 bytes at the end
         byte[] augmented = new byte[message.length + 3];
-        for (int i = 0; i < message.length; i++) {
-            augmented[i] = message[i];
-        }
+        System.arraycopy(message, 0, augmented, 0, message.length);
         for (int i = 0; i < 3; i++) {
             augmented[message.length + i] = 0;
         }

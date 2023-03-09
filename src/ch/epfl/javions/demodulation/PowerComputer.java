@@ -2,7 +2,6 @@ package ch.epfl.javions.demodulation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
@@ -48,9 +47,7 @@ public class PowerComputer {
         for (int i = 0; i < 8; i++) {
             if (i - count >= 0) saved[i - count] = saved[i];
         }
-        for (int i = start; i < read; i++) {
-            saved[8 - count + i - start] = result[i];
-        }
+        if (read - start >= 0) System.arraycopy(result, start, saved, 8 - count + start - start, read - start);
 
         return affected;
     }

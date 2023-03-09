@@ -9,7 +9,7 @@ public class WebMercator {
     private WebMercator() {}
 
     /**
-     * Converts a longitude to a x coordinate following the Web Mercator projection
+     * Converts a longitude to an x coordinate following the Web Mercator projection
      * @param zoomLevel the zoom level of the map
      * @param longitude the longitude to convert
      * @return the x coordinate
