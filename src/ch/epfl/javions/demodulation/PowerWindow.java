@@ -6,7 +6,7 @@ import java.io.InputStream;
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 public class PowerWindow {
-    private static final int BATCH_SIZE = (int)Math.pow(2, 16);
+    public static final int BATCH_SIZE = (int)Math.pow(2, 16);
     private final int windowSize;
     private long position = 0;
     private final PowerComputer computer;
@@ -17,8 +17,8 @@ public class PowerWindow {
         checkArgument(windowSize > 0 && windowSize <= BATCH_SIZE);
 
         this.windowSize = windowSize;
-        this.windowA = new int[windowSize];
-        this.windowB = new int[windowSize];
+        this.windowA = new int[BATCH_SIZE];
+        this.windowB = new int[BATCH_SIZE];
 
         this.computer = new PowerComputer(stream, BATCH_SIZE);
 
@@ -32,7 +32,10 @@ public class PowerWindow {
         return position;
     }
     public boolean isFull() {
-        return true; // TODO
+        for (int i = 0; i < windowSize; i++) {
+            if (get(i) == 0) return false;
+        }
+        return true;
     }
 
     //                                 windowSize
@@ -57,7 +60,7 @@ public class PowerWindow {
         }
     }
     public void advanceBy(int offset) throws IOException {
-        checkArgument(offset >= 0);
+        checkArgument(offset > 0);
 
         for (int i = 0; i < offset; i++) {
             advance();
