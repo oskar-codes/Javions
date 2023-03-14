@@ -64,6 +64,11 @@ public class PowerComputer {
             affected++;
         }
 
+        for (int i = affected; i < batchSize; i++) {
+//            System.out.println("INSERTED -1");
+            batch[i] = -1;
+        }
+
         int start = Math.max(read - 8, 0);
         int count = read - start;
 

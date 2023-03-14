@@ -14,9 +14,11 @@ public class PowerWindow {
     public static final int BATCH_SIZE = (int)Math.pow(2, 16);
     private final int windowSize;
     private long position = 0;
+    private long actualPosition = 0;
     private final PowerComputer computer;
     private final int[] windowA;
     private final int[] windowB;
+    private boolean firstTime = true;
 
     /**
      * Creates a new PowerWindow of the given size, given a stream of bytes.
@@ -49,7 +51,7 @@ public class PowerWindow {
      * @return the position of the window
      */
     public long position() {
-        return position;
+        return actualPosition;
     }
 
     /**
@@ -58,7 +60,7 @@ public class PowerWindow {
      */
     public boolean isFull() {
         for (int i = 0; i < windowSize; i++) {
-            if (get(i) == 0) return false;
+            if (get(i) == -1) return false;
         }
         return true;
     }
@@ -89,6 +91,13 @@ public class PowerWindow {
      */
     public void advance() throws IOException {
         position++;
+        actualPosition++;
+
+        if (position + windowSize >= BATCH_SIZE && firstTime) {
+            computer.readBatch(windowB);
+            firstTime = false;
+        }
+
         if (position + windowSize >= 2L * BATCH_SIZE) {
             position -= BATCH_SIZE;
             System.arraycopy(windowB, 0, windowA, 0, BATCH_SIZE);
@@ -103,7 +112,6 @@ public class PowerWindow {
      */
     public void advanceBy(int offset) throws IOException {
         checkArgument(offset > 0);
-
         for (int i = 0; i < offset; i++) {
             advance();
         }
