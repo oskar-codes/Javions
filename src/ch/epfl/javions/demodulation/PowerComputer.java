@@ -54,18 +54,12 @@ public class PowerComputer {
 
         int affected = 0;
         for (int i = 1; i < read; i+=2) {
-
-//            System.out.println("####### " + i/2 + " #######");
-//            System.out.println(get(result, i - 7) + " - " + get(result, i - 5) + " + " + get(result, i - 3) + " - " + get(result, i-1));
-//            System.out.println(get(result, i - 6) + " - " + get(result, i - 4) + " + " + get(result, i - 2) + " - " + get(result, i));
-
             batch[(i - 1) / 2] = (int) (Math.pow(get(result, i - 6) - get(result, i - 4) + get(result, i - 2) - get(result, i), 2) +
                                 Math.pow(get(result, i - 7) - get(result, i - 5) + get(result, i - 3) - get(result, i - 1), 2));
             affected++;
         }
 
         for (int i = affected; i < batchSize; i++) {
-//            System.out.println("INSERTED -1");
             batch[i] = -1;
         }
 
