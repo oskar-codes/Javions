@@ -1,4 +1,4 @@
-package ch.epfl.javions.test;
+package ch.epfl.javions.given;
 
 import ch.epfl.javions.demodulation.PowerWindow;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package ch.epfl.javions.test;
+package ch.epfl.javions.given;
 
 import ch.epfl.javions.demodulation.SamplesDecoder;
 import org.junit.jupiter.api.Test;
