@@ -8,12 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import static java.lang.Thread.sleep;
-
 public final class PrintRawMessages {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
-        sleep(10 * 1000);
+//        System.in.read();
 
         System.out.println("Started");
         Date start = new Date();
@@ -26,7 +24,6 @@ public final class PrintRawMessages {
             while ((m = d.nextMessage()) != null) {
                 System.out.println(m);
                 n++;
-//                if (n >= 40) break;
             }
             System.out.println("Number of messages: " + n);
         }
