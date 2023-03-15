@@ -1,7 +1,7 @@
 package ch.epfl.javions;
 
 /**
- * Non-instanciable utility class for preconditions
+ * Non-instantiable utility class for preconditions
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */

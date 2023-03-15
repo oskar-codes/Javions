@@ -66,7 +66,7 @@ class GivenAircraftDatabaseTest {
         assertEquals(WakeTurbulenceCategory.MEDIUM, aircraftData.wakeTurbulenceCategory());
     }
 
-    //    @Test
+    @Test
     void aircraftDatabaseGetWorksWithEmptyColumns() throws IOException {
         var aircraftDatabase = getDatabase();
         var aircraftData = aircraftDatabase.get(new IcaoAddress("AAAAAA"));

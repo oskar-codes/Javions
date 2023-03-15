@@ -3,7 +3,7 @@ package ch.epfl.javions;
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
- * Non instanciable utility class for mathematical operations
+ * Non instantiable utility class for mathematical operations
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */

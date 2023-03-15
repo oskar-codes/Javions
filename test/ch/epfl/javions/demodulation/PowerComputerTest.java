@@ -52,7 +52,7 @@ class PowerComputerTest {
         DataInputStream stream = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream("resources/samples.bin")));
-        int size = 160;
+        int size = 120;
         PowerComputer computer = new PowerComputer(stream, size);
         int[] batch = new int[size];
 

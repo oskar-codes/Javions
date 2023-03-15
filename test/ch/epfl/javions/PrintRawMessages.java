@@ -13,7 +13,7 @@ import static java.lang.Thread.sleep;
 public final class PrintRawMessages {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-//        sleep(10 * 1000);
+        sleep(10 * 1000);
 
         System.out.println("Started");
         Date start = new Date();

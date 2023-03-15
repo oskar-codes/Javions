@@ -19,7 +19,7 @@ public class PowerWindow {
     private final int[] windowA;
     private final int[] windowB;
     private boolean shouldFillB = true;
-    private boolean aFirst = true;
+    private boolean filledWindow;
 
     /**
      * Creates a new PowerWindow of the given size, given a stream of bytes.
@@ -36,7 +36,8 @@ public class PowerWindow {
 
         this.computer = new PowerComputer(stream, BATCH_SIZE);
 
-        computer.readBatch(windowA);
+        int read = computer.readBatch(windowA);
+        filledWindow = read == BATCH_SIZE;
     }
 
     /**
@@ -60,6 +61,7 @@ public class PowerWindow {
      * @return true if the window is full, false otherwise
      */
     public boolean isFull() {
+        if (filledWindow) return true;
         for (int i = 0; i < windowSize; i++) {
             if (get(i) == -1) return false;
         }
@@ -81,8 +83,8 @@ public class PowerWindow {
      */
     public int get(int i) {
         if (i < 0 || i >= windowSize) throw new IndexOutOfBoundsException();
-        if (position + i >= BATCH_SIZE) return (aFirst ? windowB : windowA)[(int) (i - (BATCH_SIZE - position))];
-        return (aFirst ? windowA : windowB)[(int) (position + i)];
+        if (position + i >= BATCH_SIZE) return windowB[(int) (i - (BATCH_SIZE - position))];
+        return windowA[(int) (position + i)];
     }
 
     /**
@@ -94,14 +96,16 @@ public class PowerWindow {
         actualPosition++;
 
         if (position + windowSize >= BATCH_SIZE && shouldFillB) {
-            computer.readBatch(windowB);
+            int read = computer.readBatch(windowB);
+            filledWindow = read == BATCH_SIZE;
             shouldFillB = false;
         }
 
         if (position + windowSize >= 2L * BATCH_SIZE) {
             position -= BATCH_SIZE;
-            computer.readBatch(aFirst ? windowA : windowB);
-            aFirst = !aFirst;
+            System.arraycopy(windowB, 0, windowA, 0, BATCH_SIZE);
+            int read = computer.readBatch(windowB);
+            filledWindow = read == BATCH_SIZE;
         }
     }
 
