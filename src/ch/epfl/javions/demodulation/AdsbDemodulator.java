@@ -9,22 +9,25 @@ import java.io.InputStream;
 
 public class AdsbDemodulator {
     private final PowerWindow window;
-    private long time;
+    private final Crc24 crc = new Crc24(Crc24.GENERATOR);
+    private final byte[] byteMessage = new byte[14];
+    private int previous = 0;
+    private long time = 0;
 
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         this.window = new PowerWindow(samplesStream, 1200);
-        this.time = 0;
     }
     public RawMessage nextMessage() throws IOException {
-        int previous = 0;
+        int high;
+        int low;
+        int next;
         while (window.isFull()) {
-            int high = window.get(0) + window.get(10) + window.get(35) + window.get(45);
-            int low = window.get(5) + window.get(15) + window.get(20) + window.get(25) + window.get(30) + window.get(40);
+            high = window.get(0) + window.get(10) + window.get(35) + window.get(45);
+            low = window.get(5) + window.get(15) + window.get(20) + window.get(25) + window.get(30) + window.get(40);
 
-            int next = window.get(1) + window.get(11) + window.get(36) + window.get(46);
+            next = window.get(1) + window.get(11) + window.get(36) + window.get(46);
 
             if (high > previous && high > next && high >= 2 * low) {
-                byte[] byteMessage = new byte[14];
                 byte temp = 0;
                 boolean correctType = true;
                 for (int i = 0; i < 112; i++) {
@@ -38,12 +41,10 @@ public class AdsbDemodulator {
                         temp = 0;
                     }
                 }
-                Crc24 crc = new Crc24(Crc24.GENERATOR);
                 if (correctType && crc.crc(byteMessage) == 0) {
-                    RawMessage message = new RawMessage(time, new ByteString(byteMessage));
                     window.advanceBy(1200);
                     time += 120_000;
-                    return message;
+                    return new RawMessage(time, new ByteString(byteMessage));
                 }
             }
             previous = high;

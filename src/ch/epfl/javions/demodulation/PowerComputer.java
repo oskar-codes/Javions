@@ -14,6 +14,7 @@ public class PowerComputer {
     private final InputStream stream;
     private final int batchSize;
     private final short[] saved = new short[8];
+    private final short[] result;
 
     /**
      * Constructor for the PowerComputer class
@@ -24,6 +25,7 @@ public class PowerComputer {
         checkArgument(batchSize % 8 == 0 && batchSize > 0);
         this.stream = stream;
         this.batchSize = batchSize;
+        this.result = new short[batchSize * 2];
     }
 
     /**
@@ -49,14 +51,13 @@ public class PowerComputer {
 
         SamplesDecoder decoder = new SamplesDecoder(stream, batchSize * 2);
 
-        short[] result = new short[batchSize * 2];
         int read = decoder.readBatch(result);
 
-        int affected = 0;
+        int affected = read / 2;
+
         for (int i = 1; i < read; i+=2) {
             batch[(i - 1) / 2] = (int) (Math.pow(get(result, i - 6) - get(result, i - 4) + get(result, i - 2) - get(result, i), 2) +
                                 Math.pow(get(result, i - 7) - get(result, i - 5) + get(result, i - 3) - get(result, i - 1), 2));
-            affected++;
         }
 
         for (int i = affected; i < batchSize; i++) {
@@ -69,7 +70,7 @@ public class PowerComputer {
         for (int i = 0; i < 8; i++) {
             if (i - count >= 0) saved[i - count] = saved[i];
         }
-        if (read - start >= 0) System.arraycopy(result, start, saved, 8 - count + start - start, read - start);
+        if (read - start >= 0) System.arraycopy(result, start, saved, 8 - count, count);
 
         return affected;
     }

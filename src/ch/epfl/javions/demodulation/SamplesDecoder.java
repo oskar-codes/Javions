@@ -37,7 +37,7 @@ public final class SamplesDecoder {
      * @return the number of samples read
      * @throws IOException if an I/O error occurs
      */
-    public int readBatch(short[] batch) throws IOException {
+    public int readBatch2(short[] batch) throws IOException {
         checkArgument(batch.length == batchSize);
         bytes = stream.readNBytes(Math.min(batchSize * 2, stream.available()));
         String str = HexFormat.of().formatHex(bytes);
@@ -51,5 +51,17 @@ public final class SamplesDecoder {
             batch[read++] = (short) (((number & 0xff00) >>> 8) + ((number & 0x00ff) << 8) - 2048);
         }
         return read;
+    }
+
+    public int readBatch(short[] batch) throws IOException {
+        int readBytes = stream.readNBytes(bytes, 0, Math.min(batchSize * 2, stream.available())) / 2;
+        checkArgument(batch.length == batchSize);
+
+        for (int i = 0; i < batch.length; i++ ) {
+            short lsb = bytes[i * 2] ;
+            short msb = (short)(bytes[i * 2 + 1] & 0xf);
+            batch[i] = (short)((msb << 8)  + (lsb & 0xff) - 2048);
+        }
+        return readBytes;
     }
 }
