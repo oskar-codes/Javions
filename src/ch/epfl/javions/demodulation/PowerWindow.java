@@ -18,7 +18,8 @@ public class PowerWindow {
     private final PowerComputer computer;
     private final int[] windowA;
     private final int[] windowB;
-    private boolean firstTime = true;
+    private boolean shouldFillB = true;
+    private boolean aFirst = true;
 
     /**
      * Creates a new PowerWindow of the given size, given a stream of bytes.
@@ -80,9 +81,8 @@ public class PowerWindow {
      */
     public int get(int i) {
         if (i < 0 || i >= windowSize) throw new IndexOutOfBoundsException();
-
-        if (position + i >= BATCH_SIZE) return windowB[(int) (i - (BATCH_SIZE - position))];
-        return windowA[(int) (position + i)];
+        if (position + i >= BATCH_SIZE) return (aFirst ? windowB : windowA)[(int) (i - (BATCH_SIZE - position))];
+        return (aFirst ? windowA : windowB)[(int) (position + i)];
     }
 
     /**
@@ -93,15 +93,15 @@ public class PowerWindow {
         position++;
         actualPosition++;
 
-        if (position + windowSize >= BATCH_SIZE && firstTime) {
+        if (position + windowSize >= BATCH_SIZE && shouldFillB) {
             computer.readBatch(windowB);
-            firstTime = false;
+            shouldFillB = false;
         }
 
         if (position + windowSize >= 2L * BATCH_SIZE) {
             position -= BATCH_SIZE;
-            System.arraycopy(windowB, 0, windowA, 0, BATCH_SIZE);
-            computer.readBatch(windowB);
+            computer.readBatch(aFirst ? windowA : windowB);
+            aFirst = !aFirst;
         }
     }
 

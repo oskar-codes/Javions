@@ -11,10 +11,10 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Eddy Rashed (360667)
  */
 public class PowerComputer {
-    private final InputStream stream;
     private final int batchSize;
     private final short[] saved = new short[8];
     private final short[] result;
+    private final SamplesDecoder decoder;
 
     /**
      * Constructor for the PowerComputer class
@@ -23,9 +23,9 @@ public class PowerComputer {
      */
     public PowerComputer(InputStream stream, int batchSize) {
         checkArgument(batchSize % 8 == 0 && batchSize > 0);
-        this.stream = stream;
         this.batchSize = batchSize;
         this.result = new short[batchSize * 2];
+        this.decoder = new SamplesDecoder(stream, batchSize * 2);
     }
 
     /**
@@ -49,8 +49,6 @@ public class PowerComputer {
     public int readBatch(int[] batch) throws IOException {
         checkArgument(batch.length == batchSize);
 
-        SamplesDecoder decoder = new SamplesDecoder(stream, batchSize * 2);
-
         int read = decoder.readBatch(result);
 
         int affected = read / 2;
@@ -67,9 +65,6 @@ public class PowerComputer {
         int start = Math.max(read - 8, 0);
         int count = read - start;
 
-        for (int i = 0; i < 8; i++) {
-            if (i - count >= 0) saved[i - count] = saved[i];
-        }
         if (read - start >= 0) System.arraycopy(result, start, saved, 8 - count, count);
 
         return affected;

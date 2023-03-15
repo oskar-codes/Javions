@@ -8,17 +8,17 @@ package ch.epfl.javions;
 public final class Crc24 {
     // Default CRC generator
     public static final int GENERATOR = 0xFFF409; // 1111_1111_1111_0100_0000_1001
-    // Generator in use by the methods
-    private final int generator;
     // Table for the crc method, generated with the crc_bitwise method in buildTable
     private final int[] table = new int[256];
+    private final int[] bitwiseTable;
 
     /**
      * Constructor for the Crc24 class, generates the table for the crc method
      * @param generator - the generator to use for the CRC-24 calculation
      */
     public Crc24(int generator) {
-        this.generator = generator;
+        // Generator in use by the methods
+        this.bitwiseTable = new int[]{0, generator & 0xffffff};
         buildTable();
     }
 
@@ -37,21 +37,17 @@ public final class Crc24 {
      * @return the CRC-24 of the byte array as an int
      */
     private int crc_bitwise(byte[] message) {
-        int[] table = new int[]{0, generator & 0xffffff};
         int crc = 0;
 
         // Calculates the augmented message, with three 0 bytes at the end
         byte[] augmented = new byte[message.length + 3];
         System.arraycopy(message, 0, augmented, 0, message.length);
-        for (int i = 0; i < 3; i++) {
-            augmented[message.length + i] = 0;
-        }
 
         // Calculates the CRC-24 of the augmented message
         for (byte b : augmented) {
             for (int i = 7; i >= 0; i--) {
                 int bit = (Byte.toUnsignedInt(b) >> i) & 1;
-                crc = ((crc << 1) | bit) ^ table[(crc >>> 23) & 1];
+                crc = ((crc << 1) | bit) ^ bitwiseTable[(crc >>> 23) & 1];
             }
         }
 
@@ -68,9 +64,6 @@ public final class Crc24 {
         // Calculates the augmented message, with three 0 bytes at the end
         byte[] augmented = new byte[message.length + 3];
         System.arraycopy(message, 0, augmented, 0, message.length);
-        for (int i = 0; i < 3; i++) {
-            augmented[message.length + i] = 0;
-        }
 
         // Calculates the CRC-24 of the augmented message
         int crc = 0;
