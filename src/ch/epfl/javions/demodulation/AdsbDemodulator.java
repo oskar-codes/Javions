@@ -1,6 +1,5 @@
 package ch.epfl.javions.demodulation;
 
-import ch.epfl.javions.ByteString;
 import ch.epfl.javions.adsb.RawMessage;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class AdsbDemodulator {
                     if (message != null) {
                         window.advanceBy(1200);
                         time += 120_000;
-                        return new RawMessage(time, new ByteString(byteMessage));
+                        return message;
                     }
                 }
             }
