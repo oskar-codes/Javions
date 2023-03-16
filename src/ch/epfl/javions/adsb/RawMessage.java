@@ -7,12 +7,12 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 import static ch.epfl.javions.Preconditions.checkArgument;
 public record RawMessage(long timeStampNs, ByteString bytes) {
     public static final int LENGTH = 14;
+    private static final Crc24 crc = new Crc24(Crc24.GENERATOR);
     public RawMessage {
         checkArgument(timeStampNs >= 0 && bytes.size() == LENGTH);
     }
 
     public static RawMessage of(long timeStampNs, byte[] bytes) {
-        Crc24 crc = new Crc24(Crc24.GENERATOR);
         if (crc.crc(bytes) != 0) return null;
         return new RawMessage(timeStampNs, new ByteString(bytes));
     }

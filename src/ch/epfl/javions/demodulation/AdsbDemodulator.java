@@ -1,7 +1,6 @@
 package ch.epfl.javions.demodulation;
 
 import ch.epfl.javions.ByteString;
-import ch.epfl.javions.Crc24;
 import ch.epfl.javions.adsb.RawMessage;
 
 import java.io.IOException;
@@ -9,7 +8,6 @@ import java.io.InputStream;
 
 public class AdsbDemodulator {
     private final PowerWindow window;
-    private final Crc24 crc = new Crc24(Crc24.GENERATOR);
     private final byte[] byteMessage = new byte[14];
     private int previous = 0;
     private long time = 0;
@@ -41,10 +39,13 @@ public class AdsbDemodulator {
                         temp = 0;
                     }
                 }
-                if (correctType && crc.crc(byteMessage) == 0) {
-                    window.advanceBy(1200);
-                    time += 120_000;
-                    return new RawMessage(time, new ByteString(byteMessage));
+                if (correctType) {
+                    RawMessage message = RawMessage.of(time, byteMessage);
+                    if (message != null) {
+                        window.advanceBy(1200);
+                        time += 120_000;
+                        return new RawMessage(time, new ByteString(byteMessage));
+                    }
                 }
             }
             previous = high;

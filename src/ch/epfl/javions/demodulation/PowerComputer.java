@@ -29,15 +29,14 @@ public class PowerComputer {
     }
 
     /**
-     * Returns the value at the given index of the given array, or 0 if the index is out of bounds. If the index is negative, returns values from the saved array.
-     * @param arr - the array to get the value from
+     * Returns the value at the given index of the result array. If the index is negative, returns values from the saved array. If the index is out of bounds, returns 0.
      * @param index - the index of the value to get
-     * @return the value at the given index of the given array, or 0 if the index is out of bounds
+     * @return the value at the given index
      */
-    private short get(short[] arr, int index) {
+    private short get(int index) {
         if (index < -8) return 0;
         if (index < 0) return saved[index + 8];
-        return arr[index];
+        return result[index];
     }
 
     /**
@@ -54,8 +53,8 @@ public class PowerComputer {
         int affected = read / 2;
 
         for (int i = 1; i < read; i+=2) {
-            batch[(i - 1) / 2] = (int) (Math.pow(get(result, i - 6) - get(result, i - 4) + get(result, i - 2) - get(result, i), 2) +
-                                Math.pow(get(result, i - 7) - get(result, i - 5) + get(result, i - 3) - get(result, i - 1), 2));
+            batch[(i - 1) / 2] = (int) (Math.pow(get(i - 6) - get(i - 4) + get(i - 2) - get(i), 2) +
+                                Math.pow(get(i - 7) - get(i - 5) + get(i - 3) - get(i - 1), 2));
         }
 
         for (int i = affected; i < batchSize; i++) {
