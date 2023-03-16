@@ -62,7 +62,7 @@ public class PowerWindow {
      */
     public boolean isFull() {
         if (filledWindow) return true;
-        for (int i = 0; i < windowSize; i++) {
+        for (int i = windowSize - 1; i >= 0; i--) {
             if (get(i) == -1) return false;
         }
         return true;

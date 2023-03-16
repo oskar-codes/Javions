@@ -5,15 +5,31 @@ import ch.epfl.javions.adsb.RawMessage;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * A demodulator of ADS-B messages from a stream of power samples.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public class AdsbDemodulator {
     private final PowerWindow window;
     private final byte[] byteMessage = new byte[14];
     private int previous = 0;
     private long time = 0;
 
+/**
+     * Creates a new AdsbDemodulator given a stream of power samples.
+     * @param samplesStream - the stream of power samples
+     * @throws IOException - if an I/O error occurs
+     */
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         this.window = new PowerWindow(samplesStream, 1200);
     }
+
+    /**
+     * Returns the next ADS-B message in the stream, or null if there is no more message.
+     * @return the next ADS-B message in the stream, or null if there is no more message
+     * @throws IOException - if an I/O error occurs
+     */
     public RawMessage nextMessage() throws IOException {
         int high;
         int low;
