@@ -1,6 +1,7 @@
-package ch.epfl.javions.given.step1;
+package ch.epfl.javions.given.step3;
 
 import ch.epfl.javions.demodulation.PowerWindow;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;

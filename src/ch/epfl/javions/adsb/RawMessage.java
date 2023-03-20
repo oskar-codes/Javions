@@ -1,5 +1,6 @@
 package ch.epfl.javions.adsb;
 
+import ch.epfl.javions.Bits;
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.Crc24;
 import ch.epfl.javions.aircraft.IcaoAddress;
@@ -52,7 +53,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return the type code of the message
      */
     public static int typeCode(long payload) {
-        return (int) (payload >>> 51);
+        return Bits.extractUInt(payload, 51, 5);
     }
 
     /**
@@ -68,7 +69,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return the ICAO address of the message
      */
     public IcaoAddress icaoAddress() {
-        return new IcaoAddress(Long.toString(bytes.bytesInRange(1, 4), 16).toUpperCase());
+        return new IcaoAddress("%06X".formatted(bytes.bytesInRange(1, 4)));
     }
 
     /**
