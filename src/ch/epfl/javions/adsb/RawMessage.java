@@ -57,8 +57,8 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
     }
 
     /**
-     * Returns the time stamp of the message in nanoseconds.
-     * @return the time stamp of the message in nanoseconds
+     * Returns the DF attribute.
+     * @return the DF attribute
      */
     public int downLinkFormat() {
         return bytes.byteAt(0) >>> 3;

@@ -1,0 +1,60 @@
+package ch.epfl.javions.adsb;
+
+import ch.epfl.javions.aircraft.IcaoAddress;
+
+import java.util.HexFormat;
+
+import static ch.epfl.javions.Preconditions.checkArgument;
+
+public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
+
+    public AircraftIdentificationMessage {
+        if (icaoAddress == null || callSign == null) {
+            throw new NullPointerException("Arguments cannot be null");
+        }
+        checkArgument(timeStampNs >= 0);
+    }
+
+    public static AircraftIdentificationMessage of(RawMessage rawMessage) {
+        int first = 14 - rawMessage.downLinkFormat();
+        int second = rawMessage.bytes().byteAt(0) & 0b111;
+
+        int category = (first << 4) | second;
+
+        long cs = rawMessage.payload()  & (long) Math.pow(2, 48) - 1;
+
+        String string = "";
+
+        char[] alphabet = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+        boolean temp = true;
+        for (int i = 48; i >= 0; i -= 6) {
+            int c = (int) (cs >>> (i - 6)) & 0b111111;
+
+            if (c >= 1 && c <= 26) {
+                string += alphabet[c - 1];
+                continue;
+            }
+
+            if (c >= 48 && c <= 57) {
+                string += alphabet[c - 22];
+                continue;
+            }
+
+            if (c == 32) {
+                string += " ";
+                continue;
+            }
+
+            temp = false;
+            System.out.println(c);
+        }
+        if (!temp) {
+            return null;
+        }
+        System.out.println(string);
+
+        CallSign callSign = new CallSign(string);
+        return new AircraftIdentificationMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), category, callSign);
+    }
+
+}
