@@ -15,6 +15,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
         checkArgument(timeStampNs >= 0);
     }
 
+    //check if TypeCode is valid in tests
     public static AircraftIdentificationMessage of(RawMessage rawMessage) {
         int first = 14 - rawMessage.downLinkFormat();
         int second = rawMessage.bytes().byteAt(0) & 0b111;
@@ -46,7 +47,6 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             }
 
             temp = false;
-            System.out.println(c);
         }
         if (!temp) {
             return null;

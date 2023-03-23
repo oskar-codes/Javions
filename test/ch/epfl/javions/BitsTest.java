@@ -26,7 +26,6 @@ class BitsTest {
             assertEquals(i, n);
         }
     }
-
     @Test
     void bitsExtractCanExtract31Bits() {
         var v = 0xFFFF_7654_ABCD_FFFFL;
