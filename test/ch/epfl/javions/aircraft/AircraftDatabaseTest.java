@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AircraftDatabaseTest {
-    // TODO: write null test for constructor
-
     @Test
     void get() throws IOException {
         AircraftDatabase db = new AircraftDatabase("D:\\EPFL\\Cours\\BA2\\Prog\\Projets\\Javions\\resources\\aircraft.zip");

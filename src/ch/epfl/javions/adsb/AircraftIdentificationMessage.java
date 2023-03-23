@@ -21,12 +21,12 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
         int category = (first << 4) | second;
 
-        long cs = rawMessage.payload()  & (long) Math.pow(2, 48) - 1;
+        long cs = rawMessage.payload() & (long) Math.pow(2, 48) - 1;
 
         String string = "";
 
         char[] alphabet = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        for (int i = 48; i >= 0; i -= 6) {
+        for (int i = 48; i > 0; i -= 6) {
             int c = (int) (cs >>> (i - 6)) & 0b111111;
 
             if (c >= 1 && c <= 26) {
@@ -41,7 +41,9 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
             if (c == 32) {
                 string += " ";
+                continue;
             }
+            return null;
         }
 
         CallSign callSign = new CallSign(string);

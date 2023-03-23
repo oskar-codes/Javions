@@ -14,8 +14,8 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
         checkArgument(mostRecent == 0 || mostRecent == 1);
 
-        y0 /= Math.pow(2, 17);
-        y1 /= Math.pow(2, 17);
+//        y0 /= Math.pow(2, 17);
+//        y1 /= Math.pow(2, 17);
 
         double zLat = Math.rint(y0 * 59 - y1 * 60);
 
@@ -45,8 +45,8 @@ public class CprDecoder {
 
         if (ZL0_0 == ZL0_1) return null;
 
-        x0 /= Math.pow(2, 17);
-        x1 /= Math.pow(2, 17);
+//        x0 /= Math.pow(2, 17);
+//        x1 /= Math.pow(2, 17);
 
         double zLon = Math.rint(x0 * ZL1_0 - x1 * ZL0_0);
 
