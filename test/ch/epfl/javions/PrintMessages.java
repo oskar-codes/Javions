@@ -22,13 +22,16 @@ public final class PrintMessages {
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
             int n = 0;
+
             while ((m = d.nextMessage()) != null) {
+                if (m.typeCode() != 1 && m.typeCode() != 2 && m.typeCode() != 3 && m.typeCode() != 4) continue;
 
                 AircraftIdentificationMessage a = AircraftIdentificationMessage.of(m);
                 System.out.println(a);
 
                 n++;
             }
+
             System.out.println("Number of messages: " + n);
         }
 

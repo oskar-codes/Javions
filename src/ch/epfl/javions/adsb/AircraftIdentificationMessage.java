@@ -2,8 +2,6 @@ package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.aircraft.IcaoAddress;
 
-import java.util.HexFormat;
-
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
@@ -17,8 +15,9 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
     //check if TypeCode is valid in tests
     public static AircraftIdentificationMessage of(RawMessage rawMessage) {
-        int first = 14 - rawMessage.downLinkFormat();
-        int second = rawMessage.bytes().byteAt(0) & 0b111;
+
+        int first = 14 - rawMessage.typeCode();
+        int second = (int) (rawMessage.payload() >>> 48 & 0b111);
 
         int category = (first << 4) | second;
 
@@ -26,8 +25,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
         String string = "";
 
-        char[] alphabet = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        boolean temp = true;
+        char[] alphabet = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         for (int i = 48; i >= 0; i -= 6) {
             int c = (int) (cs >>> (i - 6)) & 0b111111;
 
@@ -43,15 +41,8 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
             if (c == 32) {
                 string += " ";
-                continue;
             }
-
-            temp = false;
         }
-        if (!temp) {
-            return null;
-        }
-        System.out.println(string);
 
         CallSign callSign = new CallSign(string);
         return new AircraftIdentificationMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), category, callSign);

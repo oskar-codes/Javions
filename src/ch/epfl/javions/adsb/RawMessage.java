@@ -1,6 +1,5 @@
 package ch.epfl.javions.adsb;
 
-import ch.epfl.javions.Bits;
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.Crc24;
 import ch.epfl.javions.aircraft.IcaoAddress;
@@ -53,7 +52,8 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return the type code of the message
      */
     public static int typeCode(long payload) {
-        return Bits.extractUInt(payload, 51, 5);
+        return (int) (payload >> 51 & 0b11111);
+//        return Bits.extractUInt(payload, 51, 5);
     }
 
     /**
