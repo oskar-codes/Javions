@@ -41,11 +41,11 @@ public final class PrintMessages {
                     n++;
                 }
 
-                if (m.typeCode() >= 9 && m.typeCode() <= 18 || m.typeCode() >= 20 && m.typeCode() <= 22) {
-                    AirbornePositionMessage a = AirbornePositionMessage.of(m);
-                    System.out.println(a);
-                    n++;
-                }
+//                if (m.typeCode() >= 9 && m.typeCode() <= 18 || m.typeCode() >= 20 && m.typeCode() <= 22) {
+//                    AirbornePositionMessage a = AirbornePositionMessage.of(m);
+//                    System.out.println(a);
+//                    n++;
+//                }
             }
 
             System.out.println("Number of messages: " + n);

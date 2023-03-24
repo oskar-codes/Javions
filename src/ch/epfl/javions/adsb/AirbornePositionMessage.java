@@ -7,7 +7,17 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 import static ch.epfl.javions.Bits.extractUInt;
 import static ch.epfl.javions.Preconditions.checkArgument;
 
-//check que code de type soit contenu dans (9,18) et (20,22)
+/**
+ * A class that represents an ADS-B airborne position message.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ * @param timeStampNs - time of reception of the message
+ * @param icaoAddress - ICAO address of the aircraft
+ * @param altitude - altitude of the aircraft
+ * @param parity - parity of the message
+ * @param x - longitude of the aircraft
+ * @param y - latitude of the aircraft
+ */
 public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress, double altitude, int parity, double x, double y) implements Message {
     public AirbornePositionMessage {
         if (icaoAddress == null) {
@@ -16,10 +26,21 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         checkArgument(timeStampNs >= 0 && (parity == 0 || parity == 1) && x >= 0 && x < 1 && y >= 0 && y < 1);
     }
 
+    /**
+     * Returns 1 if the bit is set, 0 otherwise.
+     * @param data - the data
+     * @param bit - the bit
+     * @return 1 if the bit is set, 0 otherwise
+     */
     private static int bitValue(long data, int bit) {
         return Bits.testBit(data, bit) ? 1 : 0;
     }
 
+    /**
+     * Returns the value corresponding to the given gray code.
+     * @param v - the gray code
+     * @return the value corresponding to the given gray code
+     */
     private static long gray(long v) {
         int n = (int) (Math.floor(Math.log(v) / Math.log(2)) + 1);
         long result = v;
@@ -29,6 +50,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         return result;
     }
 
+    /**
+     * Creates an airborne position message from the given raw message.
+     * @param message - the raw message
+     * @return an airborne position message from the given raw message
+     */
     public static AirbornePositionMessage of(RawMessage message) {
 
         long data = message.payload() & (long) Math.pow(2, 48) - 1;
