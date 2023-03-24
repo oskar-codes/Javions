@@ -15,7 +15,7 @@ public class CprDecoderTest {
         GeoPos result = CprDecoder.decodePosition(x0, y0, x1, y1, 0);
         System.out.println(result);
 
-        GeoPos pos = CprDecoder.decodePosition(0.62,0.42,0.6200000000000000001,0.4200000000000000001,0);
+        GeoPos pos = CprDecoder.decodePosition(0.62,0.42,0.62,0.42,0);
         System.out.println(pos);
 
     }
