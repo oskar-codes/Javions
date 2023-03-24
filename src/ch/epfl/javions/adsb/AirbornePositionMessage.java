@@ -14,7 +14,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (icaoAddress == null) {
             throw new NullPointerException("Arguments cannot be null");
         }
-        checkArgument(timeStampNs >= 0 && (parity == 0 || parity == 1) && x > 0 && x <= 1 && y > 0 && y <= 1);
+        checkArgument(timeStampNs >= 0 && (parity == 0 || parity == 1) && x >= 0 && x < 1 && y >= 0 && y < 1);
     }
 
     private static int bitValue(long data, int bit) {
@@ -65,8 +65,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             altitude = Units.convert(-1300 + 100 * least + 500 * most, Units.Length.FOOT, Units.Length.METER);
         }
 
-        int x = 1;
-        int y = 1;
+        long lonData = extractUInt(data, 0, 17);
+        long latData = extractUInt(data, 17, 17);
+
+        double x = lonData / Math.pow(2, 17);
+        double y = latData / Math.pow(2, 17);
 
         return new AirbornePositionMessage(message.timeStampNs(), message.icaoAddress(), altitude, parity, x, y);
     }

@@ -28,16 +28,16 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
     }
 
     /**
-     * Returns the longitude in degrees
-     * @return the longitude in degrees
+     * Returns the longitude in radians
+     * @return the longitude in radians
      */
     public double longitude() {
         return Units.convertFrom(longitudeT32, Units.Angle.T32);
     }
 
     /**
-     * Returns the latitude in degrees
-     * @return the latitude in degrees
+     * Returns the latitude in radians
+     * @return the latitude in radians
      */
     public double latitude() {
         return Units.convertFrom(latitudeT32, Units.Angle.T32);
