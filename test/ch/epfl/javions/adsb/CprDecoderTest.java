@@ -13,10 +13,10 @@ public class CprDecoderTest {
         double y1 = 77558 / Math.pow(2, 17);
 
         GeoPos result = CprDecoder.decodePosition(x0, y0, x1, y1, 0);
-
         System.out.println(result);
 
-//        assertEquals(7.47606, Units.convert(result.latitude(), Units.Angle.DEGREE, Units.Angle.DEGREE), 0.00001);
+        GeoPos pos = CprDecoder.decodePosition(0.62,0.42,0.6200000000000000001,0.4200000000000000001,0);
+        System.out.println(pos);
 
     }
 }

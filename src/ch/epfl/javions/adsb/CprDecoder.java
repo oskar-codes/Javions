@@ -14,7 +14,7 @@ public class CprDecoder {
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
         checkArgument(mostRecent == 0 || mostRecent == 1);
 
-        double zLat = Math.rint(y0 * 59 - y1 * 60);
+        double zLat = Math.rint(y0 * ZP1 - y1 * ZP0);
 
         double z0Lat = zLat < 0 ? zLat + ZP0 : zLat;
         double z1Lat = zLat < 0 ? zLat + ZP1 : zLat;
@@ -24,6 +24,9 @@ public class CprDecoder {
 
         double p0Rad = Units.convert(p0, Units.Angle.TURN, Units.Angle.RADIAN);
         double p1Rad = Units.convert(p1, Units.Angle.TURN, Units.Angle.RADIAN);
+
+        double p0T32 = Units.convert(p0, Units.Angle.TURN, Units.Angle.T32);
+        double p1T32 = Units.convert(p1, Units.Angle.TURN, Units.Angle.T32);
 
         double A1 = Math.acos(
                 1 - ((1 - Math.cos(2*Math.PI*(1 / ZP0))) / Math.pow(Math.cos(p0Rad), 2))
@@ -40,6 +43,14 @@ public class CprDecoder {
 
 //        if (ZL0_0 != ZL0_1) return null;
 
+        if (ZL0_0 == 1) {
+            double x0T32 = Units.convert(x0, Units.Angle.TURN, Units.Angle.T32);
+            double x1T32 = Units.convert(x1, Units.Angle.TURN, Units.Angle.T32);
+            return mostRecent == 0 ?
+                    new GeoPos((int) Math.round(x0T32), (int) Math.round(p0T32)) :
+                    new GeoPos((int) Math.round(x1T32), (int) Math.round(p1T32));
+        }
+
         double zLon = Math.rint(x0 * ZL1_0 - x1 * ZL0_0);
 
         double z0Lon = zLon < 0 ? zLon + ZP0 : zLon;
@@ -47,14 +58,15 @@ public class CprDecoder {
         double lam0 = 1 / ZL0_0 * (z0Lon + x0);
         double lam1 = 1 / ZL1_0 * (z1Lon + x1);
 
-        double convertedLam0 = Units.convert(lam0, Units.Angle.TURN, Units.Angle.T32);
-        double convertedLam1 = Units.convert(lam1, Units.Angle.TURN, Units.Angle.T32);
+        if (lam0 > .25) lam0 -= 0.25;
+        if (lam1 > .25) lam1 -= 0.25;
 
-        double convertedP0 = Units.convert(p0, Units.Angle.TURN, Units.Angle.T32);
-        double convertedP1 = Units.convert(p1, Units.Angle.TURN, Units.Angle.T32);
+        double lam0T32 = Units.convert(lam0, Units.Angle.TURN, Units.Angle.T32);
+        double lam1T32 = Units.convert(lam1, Units.Angle.TURN, Units.Angle.T32);
+
 
         return mostRecent == 0 ?
-                new GeoPos((int) Math.round(convertedLam0), (int) Math.round(convertedP0)) :
-                new GeoPos((int) Math.round(convertedLam1), (int) Math.round(convertedP1));
+                new GeoPos((int) Math.round(lam0T32), (int) Math.round(p0T32)) :
+                new GeoPos((int) Math.round(lam1T32), (int) Math.round(p1T32));
     }
 }
