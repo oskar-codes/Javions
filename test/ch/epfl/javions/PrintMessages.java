@@ -1,9 +1,6 @@
 package ch.epfl.javions;
 
-import ch.epfl.javions.adsb.AirbornePositionMessage;
-import ch.epfl.javions.adsb.AirborneVelocityMessage;
-import ch.epfl.javions.adsb.AircraftIdentificationMessage;
-import ch.epfl.javions.adsb.RawMessage;
+import ch.epfl.javions.adsb.*;
 import ch.epfl.javions.demodulation.AdsbDemodulator;
 
 import java.io.FileInputStream;
@@ -32,31 +29,19 @@ public final class PrintMessages {
             RawMessage m;
 
             while ((m = d.nextMessage()) != null) {
-                if (m.typeCode() >= 1 && m.typeCode() <= 4) {
-                    AircraftIdentificationMessage a = AircraftIdentificationMessage.of(m);
-                    System.out.println(a);
-                    identification++;
-                     continue;
-                }
-                if (m.typeCode() >= 9 && m.typeCode() <= 18 || m.typeCode() >= 20 && m.typeCode() <= 22) {
-                    AirbornePositionMessage a = AirbornePositionMessage.of(m);
-                    System.out.println(a);
-                    position++;
-                     continue;
-                }
-                if (m.typeCode() == 19) {
-                    AirborneVelocityMessage a = AirborneVelocityMessage.of(m);
-                    if (a != null && a.speed() > maxSpeed) {
-                        maxSpeed = a.speed();
+                Message parsed = MessageParser.parse(m);
+                if (parsed != null) System.out.println(parsed);
+                switch (parsed) {
+                    case AircraftIdentificationMessage aim -> identification++;
+                    case AirbornePositionMessage apm -> position++;
+                    case AirborneVelocityMessage avm -> {
+                        velocity++;
+                        double speed = avm.speed();
+                        if (speed > maxSpeed) maxSpeed = speed;
+                        if (speed < minSpeed) minSpeed = speed;
                     }
-                     if (a != null && a.speed() < minSpeed) {
-                           minSpeed = a.speed();
-                     }
-                    System.out.println(a);
-                    velocity++;
-                    continue;
+                    case null, default -> ignored++;
                 }
-                ignored++;
             }
         }
 

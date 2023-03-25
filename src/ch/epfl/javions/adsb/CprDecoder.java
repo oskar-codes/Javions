@@ -46,15 +46,15 @@ public class CprDecoder {
                 1 - ((1 - Math.cos(2*Math.PI*(1 / ZP0))) / Math.pow(Math.cos(p0Rad), 2))
         );
         double A2 = Math.acos(
-                1 - ((1 - Math.cos(2*Math.PI*(1 / ZP1))) / Math.pow(Math.cos(p1Rad), 2))
+                1 - ((1 - Math.cos(2*Math.PI*(1 / ZP0))) / Math.pow(Math.cos(p1Rad), 2))
         );
 
         int ZL0 = Double.isNaN(A1) ? 1 : (int) Math.floor((2 * Math.PI) / A1);
         int ZL1 = ZL0 - 1;
 
-        int ZL1_2 = Double.isNaN(A2) ? 1 : (int) Math.floor((2 * Math.PI) / A2);
+        int ZL0_2 = Double.isNaN(A2) ? 1 : (int) Math.floor((2 * Math.PI) / A2);
 
-        if (ZL0 != ZL1_2 + 1) return null;
+        if (ZL0 != ZL0_2) return null;
 
         if (ZL0 == 1) {
             double x0T32 = Units.convert(x0, Units.Angle.TURN, Units.Angle.T32);

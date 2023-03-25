@@ -6,7 +6,7 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
-public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) {
+public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message {
     public AirborneVelocityMessage {
         if (icaoAddress == null) throw new NullPointerException("ICAO address is null");
         checkArgument(timeStampNs >= 0 && speed >= 0 && trackOrHeading >= 0);
