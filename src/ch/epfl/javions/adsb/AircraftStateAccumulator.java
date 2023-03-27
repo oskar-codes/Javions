@@ -1,19 +1,35 @@
 package ch.epfl.javions.adsb;
 
+/**
+ * An accumulator for aircraft state.
+ * @param <T> - the type of the state setter
+ */
 public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     private final T stateSetter;
     private AirbornePositionMessage lastEvenMessage;
     private AirbornePositionMessage lastOddMessage;
 
+    /**
+     * Constructs an accumulator for aircraft state.
+     * @param stateSetter - the state setter
+     */
     public AircraftStateAccumulator(T stateSetter) {
         if (stateSetter == null) throw new NullPointerException("Setter is null");
         this.stateSetter = stateSetter;
     }
 
+    /**
+    * Returns the state setter.
+    * @return the state setter
+    */
     public T stateSetter() {
         return stateSetter;
     }
 
+    /**
+     * Updates the state of the aircraft with the information given by the message.
+     * @param message - the message
+     */
     public void update(Message message) {
         stateSetter.setLastMessageTimeStampNs(message.timeStampNs());
 
@@ -23,7 +39,6 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 stateSetter.setCallSign(aim.callSign());
             }
             case AirbornePositionMessage apm -> {
-
                 if (apm.parity() == 0) {
                     lastEvenMessage = apm;
                 } else {

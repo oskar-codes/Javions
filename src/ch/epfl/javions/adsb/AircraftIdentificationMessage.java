@@ -62,7 +62,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             return null;
         }
 
-        CallSign callSign = new CallSign(string);
+        CallSign callSign = new CallSign(string.trim());
         return new AircraftIdentificationMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), category, callSign);
     }
 
