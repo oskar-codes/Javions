@@ -44,7 +44,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 } else {
                     lastOddMessage = apm;
                 }
-                if (lastEvenMessage != null && lastOddMessage != null && Math.abs(lastEvenMessage.timeStampNs() - lastOddMessage.timeStampNs()) < 1e10) {
+                if (lastEvenMessage != null && lastOddMessage != null && Math.abs(lastEvenMessage.timeStampNs() - lastOddMessage.timeStampNs()) <= 1e10) {
                     stateSetter.setPosition(CprDecoder.decodePosition(lastEvenMessage.x(), lastEvenMessage.y(), lastOddMessage.x(), lastOddMessage.y(), apm.parity()));
                 }
 
