@@ -12,6 +12,8 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @param icaoAddress - the ICAO address of the aircraft.
  * @param speed - the speed of the aircraft.
  * @param trackOrHeading
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
  */
 public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message {
     public AirborneVelocityMessage {
@@ -25,7 +27,6 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
      * @return the decoded AirborneVelocityMessage.
      */
     public static AirborneVelocityMessage of(RawMessage rawMessage) {
-        // TODO: Check if this is correct
         int subtype = Bits.extractUInt(rawMessage.payload(), 48, 3);
         int data = Bits.extractUInt(rawMessage.payload(), 21, 22);
 
@@ -38,7 +39,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
 
             if (vns == -1 || vew == -1) return null;
 
-            double speed = Units.convert(Math.hypot(vew, vns) * (subtype == 2 ? 4 : 1), Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 1000 / 3600;
+            double speed = Units.convert(Math.hypot(vew, vns) * (subtype == 2 ? 4 : 1), Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 10d / 36d;
 
             if (dns == 1) vns = -vns;
             if (dew == 1) vew = -vew;
@@ -55,9 +56,13 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
                 long hdg = Integer.toUnsignedLong(Bits.extractUInt(data, 11, 10));
                 double result = Units.convertFrom(Math.scalb(hdg, -10), Units.Angle.TURN);
 
-                int speed = Bits.extractUInt(data, 0, 10) * (subtype == 4 ? 4 : 1);
+                long as = Bits.extractUInt(data, 0, 10) - 1;
+                if (as == -1) return null;
+                double speed = as * (subtype == 4 ? 4 : 1);
 
-                return new AirborneVelocityMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), speed, result);
+                double convertedSpeed = Units.convert(speed, Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 1000 / 3600;
+
+                return new AirborneVelocityMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), convertedSpeed, result);
             }
         }
 

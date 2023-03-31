@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AirbornePositionMessageTest {
+class GivenAirbornePositionMessageTest {
     @Test
     void airbornePositionMessageConstructorThrowsWhenTimeStampIsInvalid() {
         assertThrows(IllegalArgumentException.class, () -> new AirbornePositionMessage(-1, new IcaoAddress("ABCDEF"), 1000, 0, 0, 0));

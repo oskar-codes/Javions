@@ -3,6 +3,8 @@ package ch.epfl.javions.adsb;
 /**
  * An accumulator for aircraft state.
  * @param <T> - the type of the state setter
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
  */
 public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     private final T stateSetter;

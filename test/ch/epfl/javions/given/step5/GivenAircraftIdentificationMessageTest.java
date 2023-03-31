@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AircraftIdentificationMessageTest {
+class GivenAircraftIdentificationMessageTest {
     @Test
     void aircraftIdentificationMessageConstructorThrowsWhenTimeStampIsInvalid() {
         assertThrows(IllegalArgumentException.class, () -> new AircraftIdentificationMessage(-1, new IcaoAddress("3950D1"), 0xA0, new CallSign("AFR13TL")));

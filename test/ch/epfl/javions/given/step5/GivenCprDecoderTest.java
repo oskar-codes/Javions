@@ -7,7 +7,7 @@ import static java.lang.Math.scalb;
 import static java.lang.Math.toDegrees;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CprDecoderTest {
+class GivenCprDecoderTest {
     private static double cpr(double cpr) {
         return scalb(cpr, -17);
     }

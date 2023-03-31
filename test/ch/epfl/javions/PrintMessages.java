@@ -30,7 +30,8 @@ public final class PrintMessages {
 
             while ((m = d.nextMessage()) != null) {
                 Message parsed = MessageParser.parse(m);
-                if (parsed != null) System.out.println(parsed);
+//                if (parsed != null) System.out.println(parsed);
+                if (parsed instanceof AirborneVelocityMessage) System.out.println(parsed);
                 switch (parsed) {
                     case AircraftIdentificationMessage aim -> identification++;
                     case AirbornePositionMessage apm -> position++;
