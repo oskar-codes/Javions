@@ -1,5 +1,7 @@
 package ch.epfl.javions.adsb;
 
+import ch.epfl.javions.GeoPos;
+
 /**
  * An accumulator for aircraft state.
  * @param <T> - the type of the state setter
@@ -47,7 +49,8 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                     lastOddMessage = apm;
                 }
                 if (lastEvenMessage != null && lastOddMessage != null && Math.abs(lastEvenMessage.timeStampNs() - lastOddMessage.timeStampNs()) <= 1e10) {
-                    stateSetter.setPosition(CprDecoder.decodePosition(lastEvenMessage.x(), lastEvenMessage.y(), lastOddMessage.x(), lastOddMessage.y(), apm.parity()));
+                    GeoPos position = CprDecoder.decodePosition(lastEvenMessage.x(), lastEvenMessage.y(), lastOddMessage.x(), lastOddMessage.y(), apm.parity());
+                    if (position != null) stateSetter.setPosition(position);
                 }
 
                 stateSetter.setAltitude(apm.altitude());
