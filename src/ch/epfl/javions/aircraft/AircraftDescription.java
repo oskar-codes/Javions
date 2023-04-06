@@ -11,13 +11,13 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public record AircraftDescription(String string) {
     // The pattern that the string must match
-    static final Pattern pattern = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
+    static final Pattern PATTERN = Pattern.compile("[ABDGHLPRSTV-][0123468][EJPT-]");
 
     /**
      * Constructs an AircraftDescription object with the given string.
      * @param string - the string representing the description of an aircraft
      */
     public AircraftDescription {
-        checkArgument(pattern.matcher(string).matches() || string.length() == 0);
+        checkArgument(PATTERN.matcher(string).matches() || string.length() == 0);
     }
 }

@@ -11,36 +11,32 @@ import java.util.Date;
 public final class PrintMessages {
     public static void main(String[] args) throws IOException {
 
-//        System.in.read();
         System.out.println("Started");
-        Date start = new Date();
+
+        Date start;
 
         int identification = 0;
         int position = 0;
         int velocity = 0;
         int ignored = 0;
 
-        double maxSpeed = -1;
-        double minSpeed = Double.MAX_VALUE;
-
         String f = "resources/samples_20230304_1442.bin";
         try (InputStream s = new FileInputStream(f)) {
+
+            start = new Date();
+
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
 
             while ((m = d.nextMessage()) != null) {
+
                 Message parsed = MessageParser.parse(m);
-//                if (parsed != null) System.out.println(parsed);
-                if (parsed instanceof AirborneVelocityMessage) System.out.println(parsed);
+                if (parsed != null) System.out.println(parsed);
+
                 switch (parsed) {
                     case AircraftIdentificationMessage aim -> identification++;
                     case AirbornePositionMessage apm -> position++;
-                    case AirborneVelocityMessage avm -> {
-                        velocity++;
-                        double speed = avm.speed();
-                        if (speed > maxSpeed) maxSpeed = speed;
-                        if (speed < minSpeed) minSpeed = speed;
-                    }
+                    case AirborneVelocityMessage avm -> velocity++;
                     case null, default -> ignored++;
                 }
             }
@@ -49,9 +45,6 @@ public final class PrintMessages {
         Date end = new Date();
         System.out.println();
         System.out.println("Executed in: " + (end.getTime() - start.getTime()) / 1000.0 + " seconds");
-        System.out.println();
-        System.out.println("Max speed: " + maxSpeed * 3.6 + " km/h");
-        System.out.println("Min speed: " + minSpeed * 3.6 + " km/h");
         System.out.println();
         System.out.println("Identification messages: " + identification);
         System.out.println("Position messages: " + position);

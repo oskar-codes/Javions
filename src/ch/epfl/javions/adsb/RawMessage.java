@@ -15,7 +15,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public record RawMessage(long timeStampNs, ByteString bytes) {
     public static final int LENGTH = 14;
-    private static final Crc24 crc = new Crc24(Crc24.GENERATOR);
+    private static final Crc24 CRC_DECODER = new Crc24(Crc24.GENERATOR);
 
     /**
      * Creates a new RawMessage. Checks that the time stamp is non-negative and that the bytes are of the correct length.
@@ -33,7 +33,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return a RawMessage from the given bytes, if the CRC is valid. Otherwise, returns null
      */
     public static RawMessage of(long timeStampNs, byte[] bytes) {
-        if (crc.crc(bytes) != 0) return null;
+        if (CRC_DECODER.crc(bytes) != 0) return null;
         return new RawMessage(timeStampNs, new ByteString(bytes));
     }
 

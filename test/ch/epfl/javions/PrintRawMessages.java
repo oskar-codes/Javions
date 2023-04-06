@@ -11,24 +11,26 @@ import java.util.Date;
 public final class PrintRawMessages {
     public static void main(String[] args) throws IOException {
 
-//        System.in.read();
-
         System.out.println("Started");
-        Date start = new Date();
+        Date start;
+
+        int n = 0;
 
         String f = "resources/samples_20230304_1442.bin";
         try (InputStream s = new FileInputStream(f)) {
+            start = new Date();
+
             AdsbDemodulator d = new AdsbDemodulator(s);
             RawMessage m;
-            int n = 0;
             while ((m = d.nextMessage()) != null) {
                 System.out.println(m);
                 n++;
             }
-            System.out.println("Number of messages: " + n);
         }
 
         Date end = new Date();
-        System.out.println("Time spent: " + (end.getTime() - start.getTime()) / 1000.0 + " seconds");
+
+        System.out.println("Number of messages: " + n);
+        System.out.println("Executed in: " + (end.getTime() - start.getTime()) / 1000.0 + " seconds");
     }
 }

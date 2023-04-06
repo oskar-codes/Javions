@@ -1,7 +1,10 @@
 package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.Units;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CprDecoderTest {
     @Test
@@ -13,10 +16,13 @@ public class CprDecoderTest {
         double y1 = 77558 / Math.pow(2, 17);
 
         GeoPos result = CprDecoder.decodePosition(x0, y0, x1, y1, 0);
-        System.out.println(result);
+        assertEquals(7.47606, Units.convertTo(result.longitude(), Units.Angle.DEGREE), 1e-4);
+        assertEquals(46.3233, Units.convertTo(result.latitude(), Units.Angle.DEGREE), 1e-4);
+
 
         GeoPos pos = CprDecoder.decodePosition(0.62,0.42,0.62,0.42,0);
-        System.out.println(pos);
+        assertEquals(-2.3186, Units.convertTo(pos.longitude(), Units.Angle.DEGREE), 1e-4);
+        assertEquals(2.51999, Units.convertTo(pos.latitude(), Units.Angle.DEGREE), 1e-4);
 
     }
 }
