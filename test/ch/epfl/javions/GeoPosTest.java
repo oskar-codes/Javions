@@ -58,4 +58,16 @@ class GeoPosTest {
         var geoPos = new GeoPos(quarterTurnT32, quarterTurnT32);
         assertEquals("(90.0°, 90.0°)", geoPos.toString());
     }
+
+    @Test
+    void compareGeopositions() {
+        GeoPos pos1 = new GeoPos(3, 2);
+        GeoPos pos2 = new GeoPos(3, 2);
+
+        assertEquals(pos1, pos2);
+        assertNotSame(pos1, pos2);
+
+        GeoPos pos3 = new GeoPos(3, 3);
+        assertNotEquals(pos1, pos3);
+    }
 }

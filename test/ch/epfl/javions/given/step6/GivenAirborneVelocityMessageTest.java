@@ -16,16 +16,12 @@ class GivenAirborneVelocityMessageTest {
 
     @Test
     void airbornePositionMessageConstructorThrowsWhenIcaoAddressIsNull() {
-        assertThrows(NullPointerException.class, () -> {
-            new AirborneVelocityMessage(100, null, 1000, 1);
-        });
+        assertThrows(NullPointerException.class, () -> new AirborneVelocityMessage(100, null, 1000, 1));
     }
 
     @Test
     void airborneVelocityMessageConstructorThrowsWhenTimeStampIsInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new AirborneVelocityMessage(-1, new IcaoAddress("ABCDEF"), 1, 1);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new AirborneVelocityMessage(-1, new IcaoAddress("ABCDEF"), 1, 1));
         assertDoesNotThrow(() -> {
             new AirborneVelocityMessage(0, new IcaoAddress("ABCDEF"), 1, 1);
         });
@@ -33,16 +29,12 @@ class GivenAirborneVelocityMessageTest {
 
     @Test
     void airborneVelocityMessageConstructorThrowsWhenSpeedIsInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new AirborneVelocityMessage(1, new IcaoAddress("ABCDEF"), -1, 1);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new AirborneVelocityMessage(1, new IcaoAddress("ABCDEF"), -1, 1));
     }
 
     @Test
     void airborneVelocityMessageConstructorThrowsWhenTrackOrHeadingIsInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new AirborneVelocityMessage(1, new IcaoAddress("ABCDEF"), 1, -1);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new AirborneVelocityMessage(1, new IcaoAddress("ABCDEF"), 1, -1));
     }
 
     String messageWithNewPayload(String baseMessage, long newPayload) {

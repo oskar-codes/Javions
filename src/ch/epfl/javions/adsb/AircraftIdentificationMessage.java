@@ -36,7 +36,7 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
         long cs = rawMessage.payload() & (long) Math.pow(2, 48) - 1;
 
-        String string = "";
+        StringBuilder string = new StringBuilder();
 
         // TODO: Do this with StringBuilder ?
         // Constructs the CallSign from the 48 bits of the payload
@@ -45,24 +45,24 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             int c = (int) (cs >>> (i - 6)) & 0b111111;
 
             if (c >= 1 && c <= 26) {
-                string += alphabet[c - 1];
+                string.append(alphabet[c - 1]);
                 continue;
             }
 
             if (c >= 48 && c <= 57) {
-                string += alphabet[c - 22];
+                string.append(alphabet[c - 22]);
                 continue;
             }
 
             if (c == 32) {
-                string += " ";
+                string.append(" ");
                 continue;
             }
 
             return null;
         }
 
-        CallSign callSign = new CallSign(string.trim());
+        CallSign callSign = new CallSign(string.toString().trim());
         return new AircraftIdentificationMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), category, callSign);
     }
 

@@ -3,39 +3,45 @@ package ch.epfl.javions.adsb;
 import ch.epfl.javions.GeoPos;
 
 public class AircraftState implements AircraftStateSetter {
-
+    private long lastMessageTimeStampNs;
     @Override
     public void setLastMessageTimeStampNs(long timeStampNs) {
-//        System.out.println("timeStampNs: " + timeStampNs);
+        lastMessageTimeStampNs = timeStampNs;
     }
 
+    private int category;
     @Override
-    public void setCategory(int category) {
-//        System.out.println("category: " + category);
+    public void setCategory(int newCategory) {
+        category = newCategory;
     }
 
+    private CallSign callSign;
     @Override
-    public void setCallSign(CallSign callSign) {
-        System.out.println("callSign: " + callSign);
+    public void setCallSign(CallSign newCallSign) {
+        callSign = newCallSign;
     }
 
+    private GeoPos position;
     @Override
-    public void setPosition(GeoPos position) {
-        System.out.println("position: " + position);
+    public void setPosition(GeoPos newPosition) {
+        position = newPosition;
     }
 
+    private double altitude;
     @Override
-    public void setAltitude(double altitude) {
-//        System.out.println("altitude: " + altitude);
+    public void setAltitude(double newAltitude) {
+        altitude = newAltitude;
     }
 
+    private double velocity;
     @Override
-    public void setVelocity(double velocity) {
-//        System.out.println("velocity: " + velocity);
+    public void setVelocity(double newVelocity) {
+        velocity = newVelocity;
     }
 
+    private double trackOrHeading;
     @Override
-    public void setTrackOrHeading(double trackOrHeading) {
-//        System.out.println("trackOrHeading: " + trackOrHeading);
+    public void setTrackOrHeading(double newTrackOrHeading) {
+        trackOrHeading = newTrackOrHeading;
     }
 }
