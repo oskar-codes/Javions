@@ -95,12 +95,14 @@ public class PowerWindow {
         position++;
         actualPosition++;
 
+        // If the first window is full and the second one has never been filled, fill it.
         if (position + windowSize >= BATCH_SIZE && shouldFillB) {
             int read = computer.readBatch(windowB);
             filledWindow = read == BATCH_SIZE;
             shouldFillB = false;
         }
 
+        /// If the first window is full and the second one is full, shift the windows.
         if (position + windowSize >= 2L * BATCH_SIZE) {
             position -= BATCH_SIZE;
             System.arraycopy(windowB, 0, windowA, 0, BATCH_SIZE);

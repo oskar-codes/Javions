@@ -52,11 +52,13 @@ public class PowerComputer {
 
         int affected = read / 2;
 
+        // Compute the power of each sample
         for (int i = 1; i < read; i+=2) {
             batch[(i - 1) / 2] = (int) (Math.pow(get(i - 6) - get(i - 4) + get(i - 2) - get(i), 2) +
                                 Math.pow(get(i - 7) - get(i - 5) + get(i - 3) - get(i - 1), 2));
         }
 
+        // Fill the rest of the batch with -1
         for (int i = affected; i < batchSize; i++) {
             batch[i] = -1;
         }
@@ -64,6 +66,7 @@ public class PowerComputer {
         int start = Math.max(read - 8, 0);
         int count = read - start;
 
+        // Save the last 8 samples for the next batch
         if (read - start >= 0) System.arraycopy(result, start, saved, 8 - count, count);
 
         return affected;

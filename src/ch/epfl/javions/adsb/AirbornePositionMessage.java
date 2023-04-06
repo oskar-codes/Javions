@@ -67,6 +67,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             long n = ((altitudeData & 0b111111100000) >>> 1) | (altitudeData & 0b1111);
             altitude = Units.convert(-1000 + 25 * n, Units.Length.FOOT, Units.Length.METER);
         } else {
+            // Manually untangle the bits
             long untangled = (long) bitValue(altitudeData, 4) << 11
                            | (long) bitValue(altitudeData, 2) << 10
                            | (long) bitValue(altitudeData, 0) << 9

@@ -32,7 +32,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
 
     /**
      * Updates the state of the aircraft with the information given by the message.
-     * @param message - the message
+     * @param message - the given message: an {@link AircraftIdentificationMessage}, an {@link AirbornePositionMessage} or an {@link AirborneVelocityMessage}
      */
     public void update(Message message) {
         stateSetter.setLastMessageTimeStampNs(message.timeStampNs());

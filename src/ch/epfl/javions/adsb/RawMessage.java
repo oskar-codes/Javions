@@ -53,7 +53,6 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      */
     public static int typeCode(long payload) {
         return (int) (payload >> 51 & 0b11111);
-//        return Bits.extractUInt(payload, 51, 5);
     }
 
     /**

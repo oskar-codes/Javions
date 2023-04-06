@@ -8,6 +8,11 @@ package ch.epfl.javions.adsb;
 public class MessageParser {
     private MessageParser() {}
 
+    /**
+     * Parses a {@link RawMessage} into a {@link Message}.
+     * @param rawMessage - the raw message to parse
+     * @return the parsed message
+     */
     public static Message parse(RawMessage rawMessage) {
         if (rawMessage.typeCode() >= 1 && rawMessage.typeCode() <= 4) {
             return AircraftIdentificationMessage.of(rawMessage);
