@@ -25,7 +25,11 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (icaoAddress == null) {
             throw new NullPointerException("Arguments cannot be null");
         }
-        checkArgument(timeStampNs >= 0 && (parity == 0 || parity == 1) && x >= 0 && x < 1 && y >= 0 && y < 1);
+        //TODO : ce formatage me parait plus lisible pour les conditions
+        checkArgument(timeStampNs >= 0 &&
+                     (parity == 0 || parity == 1) &&
+                      x >= 0 && x < 1 &&
+                      y >= 0 && y < 1);
     }
 
     /**
@@ -70,6 +74,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         int Q = bitValue(altitudeData, 4);
         if (Q == 1) {
             long n = ((altitudeData & 0b111111100000) >>> 1) | (altitudeData & 0b1111);
+            //TODO: convertFrom vu que metre c'est l'unit de base?
             altitude = Units.convert(-1000 + 25 * n, Units.Length.FOOT, Units.Length.METER);
         } else {
             // Manually untangle the bits
@@ -92,7 +97,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             if (least == 0 || least == 5 || least == 6) return null;
             if (least == 7) least = 5;
             if (most % 2 == 1) least = 6 - least;
-
+        //TODO: convertFrom vu que metre c'est l'unit de base?
             altitude = Units.convert(-1300 + 100 * least + 500 * most, Units.Length.FOOT, Units.Length.METER);
         }
 
