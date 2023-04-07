@@ -2,6 +2,7 @@ package ch.epfl.javions.adsb;
 
 /**
  * A class that parses a {@link RawMessage} into a {@link Message}.
+ *
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
@@ -10,7 +11,8 @@ public class MessageParser {
 
     /**
      * Parses a {@link RawMessage} into a {@link Message}.
-     * @param rawMessage - the raw message to parse
+     *
+     * @param rawMessage the raw message to parse
      * @return the parsed message
      */
     public static Message parse(RawMessage rawMessage) {

@@ -6,12 +6,13 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Represents an Aircraft Identification Message.
+ *
+ * @param timeStampNs the time at which the message was received
+ * @param icaoAddress the ICAO address of the aircraft
+ * @param category    the category of the aircraft
+ * @param callSign    the call sign of the aircraft
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
- * @param timeStampNs - the time at which the message was received
- * @param icaoAddress - the ICAO address of the aircraft
- * @param category - the category of the aircraft
- * @param callSign - the call sign of the aircraft
  */
 public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
 
@@ -24,7 +25,8 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
 
     /**
      * Creates an AircraftIdentificationMessage from a RawMessage.
-     * @param rawMessage - the RawMessage to be converted
+     *
+     * @param rawMessage the RawMessage to be converted
      * @return the AircraftIdentificationMessage
      */
     public static AircraftIdentificationMessage of(RawMessage rawMessage) {

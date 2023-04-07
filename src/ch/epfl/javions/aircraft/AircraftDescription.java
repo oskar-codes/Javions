@@ -6,6 +6,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Record representing the description of an aircraft.
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -15,7 +16,8 @@ public record AircraftDescription(String string) {
 
     /**
      * Constructs an AircraftDescription object with the given string.
-     * @param string - the string representing the description of an aircraft
+     *
+     * @param string the string representing the description of an aircraft
      */
     public AircraftDescription {
         checkArgument(PATTERN.matcher(string).matches() || string.length() == 0);

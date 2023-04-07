@@ -2,6 +2,7 @@ package ch.epfl.javions.aircraft;
 
 /**
  * Enum representing the wake turbulence category of an aircraft.
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -10,7 +11,8 @@ public enum WakeTurbulenceCategory {
 
     /**
      * Returns the WakeTurbulenceCategory corresponding to the given String.
-     * @param s - String to be converted
+     *
+     * @param s String to be converted
      * @return WakeTurbulenceCategory corresponding to the given String, or UNKNOWN if the String is not valid.
      */
     public static WakeTurbulenceCategory of(String s) {

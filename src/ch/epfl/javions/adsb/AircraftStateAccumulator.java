@@ -4,6 +4,7 @@ import ch.epfl.javions.GeoPos;
 
 /**
  * An accumulator for aircraft state.
+ *
  * @param <T> - the type of the state setter
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
@@ -15,7 +16,8 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
 
     /**
      * Constructs an accumulator for aircraft state.
-     * @param stateSetter - the state setter
+     *
+     * @param stateSetter the state setter
      */
     public AircraftStateAccumulator(T stateSetter) {
         if (stateSetter == null) throw new NullPointerException("Setter is null");
@@ -23,16 +25,18 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     }
 
     /**
-    * Returns the state setter.
-    * @return the state setter
-    */
+     * Returns the state setter.
+     *
+     * @return the state setter
+     */
     public T stateSetter() {
         return stateSetter;
     }
 
     /**
      * Updates the state of the aircraft with the information given by the message.
-     * @param message - the given message: an {@link AircraftIdentificationMessage}, an {@link AirbornePositionMessage} or an {@link AirborneVelocityMessage}
+     *
+     * @param message the given message: an {@link AircraftIdentificationMessage}, an {@link AirbornePositionMessage} or an {@link AirborneVelocityMessage}
      */
     public void update(Message message) {
         stateSetter.setLastMessageTimeStampNs(message.timeStampNs());

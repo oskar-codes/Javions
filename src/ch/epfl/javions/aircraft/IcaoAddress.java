@@ -6,6 +6,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Record representing an ICAO address.
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -15,7 +16,8 @@ public record IcaoAddress(String string) {
 
     /**
      * Constructs an IcaoAddress from a string.
-     * @param string - the string representing the ICAO address
+     *
+     * @param string the string representing the ICAO address
      */
     public IcaoAddress {
         checkArgument(PATTERN.matcher(string).matches() && string.length() != 0);

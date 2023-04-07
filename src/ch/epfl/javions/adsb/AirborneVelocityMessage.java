@@ -8,14 +8,16 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * A record that represents an airborne velocity message.
- * @param timeStampNs - the time at which the message was received.
- * @param icaoAddress - the ICAO address of the aircraft.
- * @param speed - the speed of the aircraft.
- * @param trackOrHeading
+ *
+ * @param timeStampNs    the time at which the message was received.
+ * @param icaoAddress    the ICAO address of the aircraft.
+ * @param speed          the speed of the aircraft.
+ * @param trackOrHeading the track or heading of the aircraft.
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
-public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed, double trackOrHeading) implements Message {
+public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed,
+                                      double trackOrHeading) implements Message {
     public AirborneVelocityMessage {
         if (icaoAddress == null) throw new NullPointerException("ICAO address is null");
         checkArgument(timeStampNs >= 0 && speed >= 0 && trackOrHeading >= 0);
@@ -23,7 +25,8 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     /**
      * Creates an AirborneVelocityMessage from a RawMessage.
-     * @param rawMessage - the RawMessage to decode.
+     *
+     * @param rawMessage the RawMessage to decode.
      * @return the decoded AirborneVelocityMessage.
      */
     public static AirborneVelocityMessage of(RawMessage rawMessage) {

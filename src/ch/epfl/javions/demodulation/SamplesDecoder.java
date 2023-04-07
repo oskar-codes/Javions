@@ -17,8 +17,8 @@ public final class SamplesDecoder {
 
     /**
      * Constructs a new SamplesDecoder.
-     * @param stream - the input stream
-     * @param batchSize - the size of the batch
+     * @param stream the input stream
+     * @param batchSize the size of the batch
      */
     public SamplesDecoder(InputStream stream, int batchSize) {
         checkArgument(batchSize > 0);
@@ -32,7 +32,7 @@ public final class SamplesDecoder {
 
     /**
      * Reads a batch of samples from the input stream and processes them.
-     * @param batch - the batch to be filled
+     * @param batch the batch to be filled
      * @return the number of samples read
      * @throws IOException if an I/O error occurs
      */

@@ -6,6 +6,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Utility class for bit operations
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -14,11 +15,12 @@ public class Bits {
 
     /**
      * Extracts a bit field from a long value
+     *
      * @param value the long value to extract from
      * @param start the index of the first bit to extract
-     * @param size the number of bits to extract
+     * @param size  the number of bits to extract
      * @return the extracted bit field
-     * @throws IllegalArgumentException if size is not in the range [1, 31]
+     * @throws IllegalArgumentException  if size is not in the range [1, 31]
      * @throws IndexOutOfBoundsException if the range [start, size] is not included in [0, 63]
      */
     public static int extractUInt(long value, int start, int size) {
@@ -31,11 +33,12 @@ public class Bits {
         Objects.checkFromIndexSize(start, size, Long.SIZE);
         checkArgument(size != 0);
 
-        return (int)((value << (Long.SIZE - size - start)) >>> (Long.SIZE - size));
+        return (int) ((value << (Long.SIZE - size - start)) >>> (Long.SIZE - size));
     }
 
     /**
      * Checks if a bit is set to 1 in a long value at a given index
+     *
      * @param value the long value to check
      * @param index the index of the bit in the long value
      * @return true if the bit is set to 1, false otherwise

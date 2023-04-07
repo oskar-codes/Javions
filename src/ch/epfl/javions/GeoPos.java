@@ -4,14 +4,16 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Record representing a geographical position
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
 public record GeoPos(int longitudeT32, int latitudeT32) {
     /**
      * Creates a new GeoPos
+     *
      * @param longitudeT32 longitude in T32
-     * @param latitudeT32 latitude in T32
+     * @param latitudeT32  latitude in T32
      * @throws IllegalArgumentException if the latitude is not a valid latitude
      */
     public GeoPos {
@@ -20,15 +22,17 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
 
     /**
      * Utility method to check if a latitude is valid
+     *
      * @param lat latitude in T32
      * @return true if the latitude is in the range [-2^30, 2^30]
      */
     public static boolean isValidLatitudeT32(int lat) {
-        return lat >= -Math.pow(2,30) && lat <= Math.pow(2, 30);
+        return lat >= -Math.pow(2, 30) && lat <= Math.pow(2, 30);
     }
 
     /**
      * Returns the longitude in radians
+     *
      * @return the longitude in radians
      */
     public double longitude() {
@@ -37,6 +41,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
 
     /**
      * Returns the latitude in radians
+     *
      * @return the latitude in radians
      */
     public double latitude() {
@@ -45,6 +50,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
 
     /**
      * Overrides the toString method to return a string representation of the GeoPos in degrees
+     *
      * @return a string representation of the GeoPos in degrees
      */
     @Override

@@ -8,6 +8,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Instanciable class for immutable byte strings
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -16,6 +17,7 @@ public final class ByteString {
 
     /**
      * Constructs a ByteString from a byte array
+     *
      * @param bytes the byte array to be used
      */
     public ByteString(byte[] bytes) {
@@ -24,6 +26,7 @@ public final class ByteString {
 
     /**
      * Returns the size of the ByteString
+     *
      * @return the size of the ByteString
      */
     public int size() {
@@ -32,6 +35,7 @@ public final class ByteString {
 
     /**
      * Returns the byte at the given index
+     *
      * @param index the index of the byte to be returned
      * @return the byte at the given index
      */
@@ -42,6 +46,7 @@ public final class ByteString {
 
     /**
      * Returns a new ByteString formed from the given hexadecimal string
+     *
      * @param hexString the hexadecimal string to be used
      * @return a new ByteString formed from the given hexadecimal string
      */
@@ -57,8 +62,9 @@ public final class ByteString {
 
     /**
      * Returns a long representing the bytes in the given range
+     *
      * @param fromIndex the index of the first byte to be used
-     * @param toIndex the index of the last byte to be used
+     * @param toIndex   the index of the last byte to be used
      * @return a long representing the bytes in the given range
      */
     public long bytesInRange(int fromIndex, int toIndex) {
@@ -73,6 +79,7 @@ public final class ByteString {
 
     /**
      * Overridden equals method
+     *
      * @param other the object to be compared to
      * @return true if the given object is a ByteString and has the same bytes as this ByteString
      */
@@ -84,6 +91,7 @@ public final class ByteString {
 
     /**
      * Overridden hashCode method
+     *
      * @return the hash code of this ByteString
      */
     @Override
@@ -93,6 +101,7 @@ public final class ByteString {
 
     /**
      * Overridden toString method
+     *
      * @return the hexadecimal representation of this ByteString
      */
     @Override

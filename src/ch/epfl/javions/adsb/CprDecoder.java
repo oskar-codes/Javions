@@ -7,21 +7,24 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * A class that decodes the CPR encoded position of an aircraft.
+ *
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
 public class CprDecoder {
-    private CprDecoder() {}
+    private CprDecoder() {
+    }
 
     public final static double ZP0 = 60;
     public final static double ZP1 = 59;
 
     /**
      * Decodes the position of an aircraft.
-     * @param x0 the longitude of the first position.
-     * @param y0 the latitude of the first position.
-     * @param x1 the longitude of the second position.
-     * @param y1 the latitude of the second position.
+     *
+     * @param x0         the longitude of the first position.
+     * @param y0         the latitude of the first position.
+     * @param x1         the longitude of the second position.
+     * @param y1         the latitude of the second position.
      * @param mostRecent the index of the most recent position.
      * @return the decoded position as a GeoPos
      */
@@ -43,10 +46,10 @@ public class CprDecoder {
         double p1T32 = Units.convert(p1, Units.Angle.TURN, Units.Angle.T32);
 
         double A1 = Math.acos(
-                1 - ((1 - Math.cos(2*Math.PI*(1 / ZP0))) / Math.pow(Math.cos(p0Rad), 2))
+                1 - ((1 - Math.cos(2 * Math.PI * (1 / ZP0))) / Math.pow(Math.cos(p0Rad), 2))
         );
         double A2 = Math.acos(
-                1 - ((1 - Math.cos(2*Math.PI*(1 / ZP0))) / Math.pow(Math.cos(p1Rad), 2))
+                1 - ((1 - Math.cos(2 * Math.PI * (1 / ZP0))) / Math.pow(Math.cos(p1Rad), 2))
         );
 
         int ZL0 = Double.isNaN(A1) ? 1 : (int) Math.floor((2 * Math.PI) / A1);

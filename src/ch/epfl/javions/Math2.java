@@ -4,6 +4,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * Non instantiable utility class for mathematical operations
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -12,8 +13,9 @@ public final class Math2 {
 
     /**
      * Clamps a value between a minimum and a maximum
+     *
      * @param min minimum value
-     * @param v value to clamp
+     * @param v   value to clamp
      * @param max maximum value
      * @return min if v < min, max if v > max, v otherwise
      * @throws IllegalArgumentException if min > max
@@ -25,6 +27,7 @@ public final class Math2 {
 
     /**
      * Returns the reciprocal hyperbolic sine of a double value.
+     *
      * @param x the value whose asinh is to be returned
      * @return the asinh of x
      */

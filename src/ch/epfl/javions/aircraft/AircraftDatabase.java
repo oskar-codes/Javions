@@ -1,12 +1,17 @@
 package ch.epfl.javions.aircraft;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.zip.ZipFile;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Instantiable class that represents a database of aircrafts.
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -16,7 +21,8 @@ public class AircraftDatabase {
 
     /**
      * Constructs an AircraftDatabase object with the given file name.
-     * @param fileName - the absolute path of the zip file containing the database
+     *
+     * @param fileName the absolute path of the zip file containing the database
      */
     public AircraftDatabase(String fileName) {
         this.fileName = fileName;
@@ -24,7 +30,8 @@ public class AircraftDatabase {
 
     /**
      * Returns the AircraftData corresponding to the given IcaoAddress.
-     * @param address - the IcaoAddress of the aircraft
+     *
+     * @param address the IcaoAddress of the aircraft
      * @return the AircraftData corresponding to the given IcaoAddress, found in the database. Returns null if the address is not found.
      * @throws IOException if the file cannot be read
      */

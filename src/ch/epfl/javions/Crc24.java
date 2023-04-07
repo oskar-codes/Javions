@@ -2,6 +2,7 @@ package ch.epfl.javions;
 
 /**
  * Instantiable class for CRC-24 calculations
+ *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -14,7 +15,8 @@ public final class Crc24 {
 
     /**
      * Constructor for the Crc24 class, generates the table for the crc method
-     * @param generator - the generator to use for the CRC-24 calculation
+     *
+     * @param generator the generator to use for the CRC-24 calculation
      */
     public Crc24(int generator) {
         // Generator in use by the methods
@@ -27,13 +29,14 @@ public final class Crc24 {
      */
     private void buildTable() {
         for (int i = 0; i < 256; i++) {
-            table[i] = crc_bitwise(new byte[]{(byte)i});
+            table[i] = crc_bitwise(new byte[]{(byte) i});
         }
     }
 
     /**
      * Calculates the CRC-24 of a byte array using a bitwise algorithm
-     * @param message - the byte array to calculate the CRC-24 of
+     *
+     * @param message the byte array to calculate the CRC-24 of
      * @return the CRC-24 of the byte array as an int
      */
     private int crc_bitwise(byte[] message) {
@@ -57,7 +60,8 @@ public final class Crc24 {
 
     /**
      * Calculates the CRC-24 of a byte array using a lookup table
-     * @param message - the byte array to calculate the CRC-24 of
+     *
+     * @param message the byte array to calculate the CRC-24 of
      * @return the CRC-24 of the byte array as an int
      */
     public int crc(byte[] message) {
