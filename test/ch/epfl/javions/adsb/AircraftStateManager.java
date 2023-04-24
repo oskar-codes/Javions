@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static javafx.collections.FXCollections.observableSet;
+import static javafx.collections.FXCollections.unmodifiableObservableSet;
 
 public final class AircraftStateManager {
     private final AircraftDatabase database;
@@ -21,7 +22,7 @@ public final class AircraftStateManager {
 
     // The states() method that returns the state attribute still Observable but ReadOnly
     public ObservableSet<ObservableAircraftState> states() {
-        return states;
+        return unmodifiableObservableSet(states);
     }
 
     public void updateWithMessage(Message message) throws IOException {

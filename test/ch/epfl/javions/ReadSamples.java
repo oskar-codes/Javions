@@ -32,7 +32,7 @@ public class ReadSamples {
                 if (m == null) continue;
                 stateManager.updateWithMessage(m);
 
-                StringBuilder output = new StringBuilder("\n".repeat(50));
+                StringBuilder output = new StringBuilder();
                 try {
                     String header = padRight("OACI", 10) + padRight("Indicatif", 10) + padRight("Immat.", 10) + padRight("Modèle", 40) + padRight("Longitude", 14) + padRight("Latitude", 14) + padRight("Altitude", 10) + padRight("Vitesse", 10);
                     output.append(header).append("\n");
