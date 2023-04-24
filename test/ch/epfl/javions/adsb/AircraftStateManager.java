@@ -16,13 +16,14 @@ public final class AircraftStateManager {
     private final AircraftDatabase database;
     private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> table = new HashMap<>();
     private final ObservableSet<ObservableAircraftState> states = observableSet();
+    private final ObservableSet<ObservableAircraftState> unmodifiableStates = unmodifiableObservableSet(states);
     public AircraftStateManager(AircraftDatabase database) {
         this.database = database;
     }
 
     // The states() method that returns the state attribute still Observable but ReadOnly
     public ObservableSet<ObservableAircraftState> states() {
-        return unmodifiableObservableSet(states);
+        return unmodifiableStates;
     }
 
     public void updateWithMessage(Message message) throws IOException {
