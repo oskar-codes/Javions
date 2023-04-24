@@ -3,24 +3,24 @@ package ch.epfl.javions.adsb;
 import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.aircraft.IcaoAddress;
 import ch.epfl.javions.gui.ObservableAircraftState;
-import javafx.beans.property.ReadOnlySetProperty;
-import javafx.beans.property.SetProperty;
-import javafx.beans.property.SimpleSetProperty;
+import javafx.collections.ObservableSet;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static javafx.collections.FXCollections.observableSet;
+
 public final class AircraftStateManager {
     private final AircraftDatabase database;
     private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> table = new HashMap<>();
-    private final SetProperty<AircraftStateAccumulator<ObservableAircraftState>> states = new SimpleSetProperty<>();
-
+    private final ObservableSet<ObservableAircraftState> states = observableSet();
     public AircraftStateManager(AircraftDatabase database) {
         this.database = database;
     }
 
-    public ReadOnlySetProperty<AircraftStateAccumulator<ObservableAircraftState>> states() {
+    // The states() method that returns the state attribute still Observable but ReadOnly
+    public ObservableSet<ObservableAircraftState> states() {
         return states;
     }
 
@@ -28,9 +28,18 @@ public final class AircraftStateManager {
         IcaoAddress address = message.icaoAddress();
         if (table.containsKey(address)) {
             table.get(address).update(message);
+            if (table.get(address).stateSetter().getPosition() != null) {
+                states.add(table.get(address).stateSetter());
+            }
         } else {
             AircraftStateAccumulator<ObservableAircraftState> obj = new AircraftStateAccumulator<>(new ObservableAircraftState(address, database.get(address)));
+            obj.update(message);
             table.put(address, obj);
+            if (obj.stateSetter().getPosition() != null) states.add(obj.stateSetter());
         }
+    }
+
+    public void purge() {
+        table.clear();
     }
 }

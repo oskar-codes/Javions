@@ -36,6 +36,13 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         this.aircraftData = data;
     }
 
+    public IcaoAddress getIcaoAddress() {
+        return icaoAddress;
+    }
+    public AircraftData getAircraftData() {
+        return aircraftData;
+    }
+
     public ReadOnlyLongProperty lastMessageTimeStampNsProperty() {
         return lastMessageTimeStampNs;
     }
@@ -135,7 +142,8 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     }
 
     private void updateTrajectory() {
-        if (trajectory.size() == 0 || !trajectory.get(trajectory.size() - 1).position.equals(getPosition())) {
+        if ((trajectory.size() == 0 || !trajectory.get(trajectory.size() - 1).position.equals(getPosition())
+            ) && getPosition() != null) {
             trajectory.add(new AirbornePos(getPosition(), getAltitude()));
             lastTrajectoryAdd = getLastMessageTimeStampNs();
         } else if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
