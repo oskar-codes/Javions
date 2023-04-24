@@ -42,6 +42,11 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
 
             if (vns == -1 || vew == -1) return null;
 
+            //TODO: j'ai rajoute ce commentaire vu que c'est pas obvious,
+            // et dans le cas subtype 1&2 on fait tout le calcul dans speed
+            // mais dans subtype 34 on fait une variable en plus
+            // faudrait faire la meme chose pour les deux
+            //Converts the result to m/s
             double speed = Units.convert(Math.hypot(vew, vns) * (subtype == 2 ? 4 : 1), Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 10d / 36d;
 
             if (dns == 1) vns = -vns;
@@ -63,6 +68,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
                 if (as == -1) return null;
                 double speed = as * (subtype == 4 ? 4 : 1);
 
+                //Converts the result to m/s
                 double convertedSpeed = Units.convert(speed, Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 1000 / 3600;
 
                 return new AirborneVelocityMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), convertedSpeed, result);

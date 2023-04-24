@@ -42,6 +42,9 @@ public final class Crc24 {
     private int crc_bitwise(byte[] message) {
         int crc = 0;
 
+        //TODO faudrait faire la double boucle de l'etape 3 plutot que d'augmenter le message parce que y a moyen que
+        // ca affecte la performance et qu'on perde des points
+        
         // Calculates the augmented message, with three 0 bytes at the end
         byte[] augmented = new byte[message.length + 3];
         System.arraycopy(message, 0, augmented, 0, message.length);
