@@ -38,9 +38,10 @@ public final class AircraftStateManager {
             table.put(address, obj);
             if (obj.stateSetter().getPosition() != null) states.add(obj.stateSetter());
         }
+        purge(message);
     }
 
-    public void purge() {
-        table.clear();
+    public void purge(Message message) {
+        states.removeIf(state -> state.getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
     }
 }

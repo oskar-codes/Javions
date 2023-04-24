@@ -6,20 +6,26 @@ import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.gui.ObservableAircraftState;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class ReadSamples {
     public static void main(String[] args) {
         AircraftStateManager stateManager = new AircraftStateManager(new AircraftDatabase("resources/aircraft.zip"));
+        int i = 0;
         try (DataInputStream s = new DataInputStream(
                 new BufferedInputStream(
                         new FileInputStream("resources/messages_20230318_0915.bin")))){
             byte[] bytes = new byte[RawMessage.LENGTH];
-            int i = 0;
+
             while (true) {
                 long timeStampNs = s.readLong();
                 int bytesRead = s.readNBytes(bytes, 0, bytes.length);
@@ -55,12 +61,25 @@ public class ReadSamples {
 //                System.out.printf("%13d: %s\n", timeStampNs, message);
                 i++;
             }
-        } catch (IOException ignored) {
-            System.out.println(ignored);
+        } catch (IOException e) {
+            System.out.println(e);
         }
+        System.out.println(i);
     }
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
+    }
+
+    @Test
+    public void testIterator() {
+        List<Integer> l = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        Iterator<Integer> it = l.iterator();
+
+        System.out.println(it.next());
+        it.remove();
+        System.out.println(it.next());
+
+        System.out.println(l);
     }
 }
