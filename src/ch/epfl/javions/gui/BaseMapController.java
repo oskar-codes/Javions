@@ -52,7 +52,11 @@ public final class BaseMapController {
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 200);
 
+            mapParameters.setxMin(mapParameters.xMinProperty().get() + e.getX());
+            mapParameters.setyMin(mapParameters.yMinProperty().get() + e.getY());
             mapParameters.changeZoomLevel(zoomDelta);
+            mapParameters.setxMin(mapParameters.xMinProperty().get() - e.getX());
+            mapParameters.setyMin(mapParameters.yMinProperty().get() - e.getY());
         });
 
         // Move the pane on mouse drag

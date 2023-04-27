@@ -46,9 +46,13 @@ public final class MapParameters {
         clampCoordinates();
     }
     public void changeZoomLevel(int zoom) {
-        this.zoom.set(Math2.clamp(6, this.zoom.get() + zoom, 19));
+        int previousZoom = this.zoom.get();
+        this.setZoom(Math2.clamp(6, this.zoom.get() + zoom, 19));
+        if (previousZoom == this.zoom.get()) return;
+
         this.xMin.set(this.xMin.get() * Math.pow(2, zoom));
         this.yMin.set(this.yMin.get() * Math.pow(2, zoom));
+
         clampCoordinates();
     }
 
