@@ -1,0 +1,113 @@
+package ch.epfl.javions.gui;
+
+import ch.epfl.javions.GeoPos;
+import ch.epfl.javions.WebMercator;
+import javafx.application.Platform;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import static javafx.scene.Cursor.CLOSED_HAND;
+import static javafx.scene.Cursor.DEFAULT;
+
+public final class BaseMapController {
+    private final TileManager tileManager;
+    private final MapParameters mapParameters;
+    private final Pane pane;
+    private final Canvas canvas;
+    private boolean redrawNeeded = true;
+    private Point2D lastMousePos = null;
+
+    public BaseMapController(TileManager tileManager, MapParameters mapParameters) {
+        this.tileManager = tileManager;
+        this.mapParameters = mapParameters;
+
+        this.pane = new Pane();
+        this.canvas = new Canvas();
+        this.pane.getChildren().add(canvas);
+        this.canvas.widthProperty().bind(pane.widthProperty());
+        this.canvas.heightProperty().bind(pane.heightProperty());
+
+        this.pane.widthProperty().addListener((p, o, n) -> redrawOnNextPulse());
+        this.pane.heightProperty().addListener((p, o, n) -> redrawOnNextPulse());
+
+        canvas.sceneProperty().addListener((p, oldS, newS) -> {
+            assert oldS == null;
+            newS.addPreLayoutPulseListener(this::redrawIfNeeded);
+        });
+
+        LongProperty minScrollTime = new SimpleLongProperty();
+        pane.setOnScroll(e -> {
+            int zoomDelta = (int) Math.signum(e.getDeltaY());
+            if (zoomDelta == 0) return;
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime < minScrollTime.get()) return;
+            minScrollTime.set(currentTime + 200);
+
+            mapParameters.changeZoomLevel(zoomDelta);
+        });
+
+        // Move the pane on mouse drag
+        pane.setOnMousePressed(e -> {
+            pane.requestFocus();
+            pane.setCursor(CLOSED_HAND);
+            lastMousePos = new Point2D(e.getX(), e.getY());
+        });
+        pane.setOnMouseReleased(e -> pane.setCursor(DEFAULT));
+        pane.setOnMouseDragged(e -> {
+            mapParameters.scroll((int) (lastMousePos.getX() - e.getX()), (int) (lastMousePos.getY() - e.getY()));
+            lastMousePos = new Point2D(e.getX(), e.getY());
+        });
+
+        mapParameters.zoomProperty().addListener((p, o, n) -> redrawOnNextPulse());
+        mapParameters.xMinProperty().addListener((p, o, n) -> redrawOnNextPulse());
+        mapParameters.yMinProperty().addListener((p, o, n) -> redrawOnNextPulse());
+
+        CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(this::redrawOnNextPulse);
+
+    }
+
+    public Pane pane() {
+        return pane;
+    }
+
+    public void centerOn(GeoPos pos) {
+        double x = WebMercator.x(mapParameters.zoomProperty().get(), pos.longitude());
+        double y = WebMercator.y(mapParameters.zoomProperty().get(), pos.latitude());
+        mapParameters.setxMin(x - canvas.getWidth() / 2);
+        mapParameters.setyMin(y - canvas.getHeight() / 2);
+    }
+    private void redrawOnNextPulse() {
+        redrawNeeded = true;
+        Platform.requestNextPulse();
+    }
+    private void redrawIfNeeded() {
+        if (!redrawNeeded) return;
+        redrawNeeded = false;
+
+        int startX = (int) Math.floor(mapParameters.xMinProperty().get() / 256);
+        int startY = (int) Math.floor(mapParameters.yMinProperty().get() / 256);
+        GraphicsContext ctx = this.canvas.getGraphicsContext2D();
+
+        for (int x = -1; x < canvas.getWidth() / 256 + 1; x++) {
+            for (int y = -1; y < canvas.getHeight() / 256 + 1; y++) {
+                Image image = tileManager.imageForTileAt(new TileManager.TileId(
+                        mapParameters.zoomProperty().get(),
+                        startX + x,
+                        startY + y
+                ));
+                ctx.drawImage(
+                        image, x * 256 - ((int) (mapParameters.xMinProperty().get() % 256)),
+                               y * 256 - ((int) (mapParameters.yMinProperty().get() % 256)));
+            }
+        }
+    }
+}

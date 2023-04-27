@@ -74,8 +74,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
         int Q = bitValue(altitudeData, 4);
         if (Q == 1) {
             long n = ((altitudeData & 0b111111100000) >>> 1) | (altitudeData & 0b1111);
-            //TODO: convertFrom vu que metre c'est l'unit de base?
-            altitude = Units.convert(-1000 + 25 * n, Units.Length.FOOT, Units.Length.METER);
+            altitude = Units.convertFrom(-1000 + 25 * n, Units.Length.FOOT);
         } else {
             // Manually untangle the bits
             long untangled = (long) bitValue(altitudeData, 4) << 11
@@ -97,8 +96,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             if (least == 0 || least == 5 || least == 6) return null;
             if (least == 7) least = 5;
             if (most % 2 == 1) least = 6 - least;
-        //TODO: convertFrom vu que metre c'est l'unit de base?
-            altitude = Units.convert(-1300 + 100 * least + 500 * most, Units.Length.FOOT, Units.Length.METER);
+            altitude = Units.convertFrom(-1300 + 100 * least + 500 * most, Units.Length.FOOT);
         }
 
         long lonData = extractUInt(data, 0, 17);

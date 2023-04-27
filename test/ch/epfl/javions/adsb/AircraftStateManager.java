@@ -37,7 +37,9 @@ public final class AircraftStateManager {
             AircraftStateAccumulator<ObservableAircraftState> obj = new AircraftStateAccumulator<>(new ObservableAircraftState(address, database.get(address)));
             obj.update(message);
             table.put(address, obj);
-            if (obj.stateSetter().getPosition() != null) states.add(obj.stateSetter());
+            if (obj.stateSetter().getPosition() != null) {
+                states.add(obj.stateSetter());
+            }
         }
         purge(message);
     }

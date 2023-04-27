@@ -39,9 +39,8 @@ public class CprDecoder {
         double p0 = (1D / ZP0) * (z0Lat + y0);
         double p1 = (1D / ZP1) * (z1Lat + y1);
 
-        //TODO radian c'est l'unit de base faut utiliser convertFrom
-        double p0Rad = Units.convert(p0, Units.Angle.TURN, Units.Angle.RADIAN);
-        double p1Rad = Units.convert(p1, Units.Angle.TURN, Units.Angle.RADIAN);
+        double p0Rad = Units.convertFrom(p0, Units.Angle.TURN);
+        double p1Rad = Units.convertFrom(p1, Units.Angle.TURN);
 
         double p0T32 = Units.convert(p0, Units.Angle.TURN, Units.Angle.T32);
         double p1T32 = Units.convert(p1, Units.Angle.TURN, Units.Angle.T32);
