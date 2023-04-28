@@ -12,7 +12,7 @@ public final class TestBaseMapController extends Application {
 
     private Stage primaryStage;
     @Override
-    public void start(Stage primaryStage) throws InterruptedException {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         Path tileCache = Path.of("tile-cache");
         TileManager tm =

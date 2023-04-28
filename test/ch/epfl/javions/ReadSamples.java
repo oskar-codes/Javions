@@ -90,9 +90,7 @@ public class ReadSamples {
                 System.out.println(output);
                 i++;
             }
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+        } catch (IOException ignored) {}
         System.out.println("Number of messages: " + i);
         writer.close();
     }
