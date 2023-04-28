@@ -52,11 +52,9 @@ public final class BaseMapController {
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 200);
 
-            mapParameters.setxMin(mapParameters.xMinProperty().get() + e.getX());
-            mapParameters.setyMin(mapParameters.yMinProperty().get() + e.getY());
+            mapParameters.scroll((int) e.getX(), (int) e.getY());
             mapParameters.changeZoomLevel(zoomDelta);
-            mapParameters.setxMin(mapParameters.xMinProperty().get() - e.getX());
-            mapParameters.setyMin(mapParameters.yMinProperty().get() - e.getY());
+            mapParameters.scroll((int) -e.getX(), (int) -e.getY());
         });
 
         // Move the pane on mouse drag
@@ -76,7 +74,6 @@ public final class BaseMapController {
         mapParameters.yMinProperty().addListener((p, o, n) -> redrawOnNextPulse());
 
         CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(this::redrawOnNextPulse);
-
     }
 
     public Pane pane() {
@@ -84,10 +81,13 @@ public final class BaseMapController {
     }
 
     public void centerOn(GeoPos pos) {
-        double x = WebMercator.x(mapParameters.zoomProperty().get(), pos.longitude());
-        double y = WebMercator.y(mapParameters.zoomProperty().get(), pos.latitude());
-        mapParameters.setxMin(x - canvas.getWidth() / 2);
-        mapParameters.setyMin(y - canvas.getHeight() / 2);
+        double x = WebMercator.x(mapParameters.getZoom(), pos.longitude());
+        double y = WebMercator.y(mapParameters.getZoom(), pos.latitude());
+
+        double deltaX = x - mapParameters.getxMin() - canvas.getWidth() / 2;
+        double deltaY = y - mapParameters.getyMin() - canvas.getHeight() / 2;
+
+        mapParameters.scroll(deltaX, deltaY);
     }
     private void redrawOnNextPulse() {
         redrawNeeded = true;
@@ -97,20 +97,23 @@ public final class BaseMapController {
         if (!redrawNeeded) return;
         redrawNeeded = false;
 
-        int startX = (int) Math.floor(mapParameters.xMinProperty().get() / 256);
-        int startY = (int) Math.floor(mapParameters.yMinProperty().get() / 256);
+        int xMin = (int) mapParameters.getxMin();
+        int yMin = (int) mapParameters.getyMin();
+
+        int startX = xMin / 256;
+        int startY = yMin / 256;
         GraphicsContext ctx = this.canvas.getGraphicsContext2D();
 
         for (int x = -1; x < canvas.getWidth() / 256 + 1; x++) {
             for (int y = -1; y < canvas.getHeight() / 256 + 1; y++) {
                 Image image = tileManager.imageForTileAt(new TileManager.TileId(
-                        mapParameters.zoomProperty().get(),
+                        mapParameters.getZoom(),
                         startX + x,
                         startY + y
                 ));
                 ctx.drawImage(
-                        image, x * 256 - ((int) (mapParameters.xMinProperty().get() % 256)),
-                               y * 256 - ((int) (mapParameters.yMinProperty().get() % 256)));
+                        image, x * 256 - (xMin % 256),
+                               y * 256 - (yMin % 256));
             }
         }
     }

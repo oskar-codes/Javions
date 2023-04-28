@@ -20,44 +20,34 @@ public final class MapParameters {
     public ReadOnlyIntegerProperty zoomProperty() {
         return zoom;
     }
-    public void setZoom(int zoom) {
-        this.zoom.set(zoom);
+    public int getZoom() {
+        return zoom.get();
     }
 
     public ReadOnlyDoubleProperty xMinProperty() {
         return xMin;
     }
-    public void setxMin(double xMin) {
-        this.xMin.set(xMin);
-        clampCoordinates();
+    public double getxMin() {
+        return xMin.get();
     }
 
     public ReadOnlyDoubleProperty yMinProperty() {
         return yMin;
     }
-    public void setyMin(double yMin) {
-        this.yMin.set(yMin);
-        clampCoordinates();
+    public double getyMin() {
+        return yMin.get();
     }
 
-    public void scroll(int x, int y) {
-        this.xMin.set((int) (this.xMin.get() + x));
-        this.yMin.set((int) (this.yMin.get() + y));
-        clampCoordinates();
+    public void scroll(double x, double y) {
+        this.xMin.set(getxMin() + x);
+        this.yMin.set(getyMin() + y);
     }
     public void changeZoomLevel(int zoom) {
-        int previousZoom = this.zoom.get();
-        this.setZoom(Math2.clamp(6, this.zoom.get() + zoom, 19));
-        if (previousZoom == this.zoom.get()) return;
+        int previousZoom = getZoom();
+        this.zoom.set(Math2.clamp(6, getZoom() + zoom, 19));
+        if (previousZoom == getZoom()) return;
 
-        this.xMin.set(this.xMin.get() * Math.pow(2, zoom));
-        this.yMin.set(this.yMin.get() * Math.pow(2, zoom));
-
-        clampCoordinates();
-    }
-
-    private void clampCoordinates() {
-        this.xMin.set(Math2.clamp(0, (int) (this.xMin.get()), 1 << (8 + this.zoom.get())));
-        this.yMin.set(Math2.clamp(0, (int) (this.yMin.get()), 1 << (8 + this.zoom.get())));
+        this.xMin.set(Math.scalb(getxMin(), zoom));
+        this.yMin.set(Math.scalb(getyMin(), zoom));
     }
 }
