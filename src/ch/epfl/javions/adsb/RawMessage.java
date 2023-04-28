@@ -17,6 +17,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 public record RawMessage(long timeStampNs, ByteString bytes) {
     public static final int LENGTH = 14;
     private static final Crc24 CRC_DECODER = new Crc24(Crc24.GENERATOR);
+    private static final String ZERO_FILL = "%06X";
 
     /**
      * Creates a new RawMessage. Checks that the time stamp is non-negative and that the bytes are of the correct length.
@@ -75,7 +76,7 @@ public record RawMessage(long timeStampNs, ByteString bytes) {
      * @return the ICAO address of the message
      */
     public IcaoAddress icaoAddress() {
-        return new IcaoAddress("%06X".formatted(bytes.bytesInRange(1, 4)));
+        return new IcaoAddress(ZERO_FILL.formatted(bytes.bytesInRange(1, 4)));
     }
 
     /**

@@ -18,6 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class AircraftDatabase {
     // The absolute path of the zip file containing the database
     private final String fileName;
+    private final static String SEPARATOR = ",";
 
     /**
      * Constructs an AircraftDatabase object with the given file name.
@@ -46,14 +47,15 @@ public class AircraftDatabase {
                 if (Integer.parseInt(line.substring(0, 6), 16) > query) break;
                 current = line;
             }
-            String[] data = current.split(",", -1);
-            if (current.startsWith(address.string())) return new AircraftData(
+            String[] data = current.split(SEPARATOR, -1);
+            if (current.startsWith(address.string()))
+                return new AircraftData(
                     new AircraftRegistration(data[1]),
                     new AircraftTypeDesignator(data[2]),
                     data[3],
                     new AircraftDescription(data[4]),
                     WakeTurbulenceCategory.of(data[5])
-            );
+                );
         }
         return null;
     }

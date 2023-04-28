@@ -2,6 +2,7 @@ package ch.epfl.javions.demodulation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
@@ -14,6 +15,7 @@ public final class SamplesDecoder {
     private final InputStream stream;
     private final int batchSize;
     private final byte[] bytes;
+    private static final int OFFSET = 2048;
 
     /**
      * Constructs a new SamplesDecoder.
@@ -22,12 +24,10 @@ public final class SamplesDecoder {
      */
     public SamplesDecoder(InputStream stream, int batchSize) {
         checkArgument(batchSize > 0);
-        if (stream == null) {
-            throw new NullPointerException("The stream cannot be null");
-        }
+        Objects.requireNonNull(stream);
         this.stream = stream;
         this.batchSize = batchSize;
-        this.bytes = new byte[batchSize * 2];
+        this.bytes = new byte[Short.BYTES * batchSize];
     }
 
     /**
@@ -37,13 +37,14 @@ public final class SamplesDecoder {
      * @throws IOException if an I/O error occurs
      */
     public int readBatch(short[] batch) throws IOException {
-        int readBytes = stream.readNBytes(bytes, 0, Math.min(batchSize * 2, stream.available())) / 2;
         checkArgument(batch.length == batchSize);
+
+        int readBytes = stream.readNBytes(bytes, 0, batchSize * Short.BYTES) / 2;
 
         for (int i = 0; i < batch.length; i++ ) {
             short lsb = bytes[i * 2] ;
             short msb = (short)(bytes[i * 2 + 1] & 0xf);
-            batch[i] = (short)((msb << 8)  + (lsb & 0xff) - 2048);
+            batch[i] = (short)((msb << Byte.SIZE)  + (lsb & 0xff) - OFFSET);
         }
         return readBytes;
     }

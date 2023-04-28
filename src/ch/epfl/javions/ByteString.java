@@ -14,6 +14,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public final class ByteString {
     private final byte[] bytes;
+    private static final HexFormat parser = HexFormat.of().withUpperCase();
 
     /**
      * Constructs a ByteString from a byte array
@@ -40,8 +41,7 @@ public final class ByteString {
      * @return the byte at the given index
      */
     public int byteAt(int index) {
-        Objects.checkIndex(index, size());
-        return bytes[index] & 0xFF;
+        return Byte.toUnsignedInt(bytes[index]);
     }
 
     /**
@@ -49,15 +49,10 @@ public final class ByteString {
      *
      * @param hexString the hexadecimal string to be used
      * @return a new ByteString formed from the given hexadecimal string
+     * @throws NumberFormatException if the hexadecimal string is invalid
      */
     public static ByteString ofHexadecimalString(String hexString) {
-        if (hexString.length() % 2 != 0) {
-            throw new NumberFormatException("Hexadecimal string must have an even number of characters");
-        }
-        if (!hexString.matches("[0-9a-fA-F]+")) {
-            throw new NumberFormatException("Hexadecimal string must contain only hexadecimal characters");
-        }
-        return new ByteString(HexFormat.of().withUpperCase().parseHex(hexString));
+        return new ByteString(parser.parseHex(hexString));
     }
 
     /**
@@ -66,10 +61,11 @@ public final class ByteString {
      * @param fromIndex the index of the first byte to be used
      * @param toIndex   the index of the last byte to be used
      * @return a long representing the bytes in the given range
+     * @throws IndexOutOfBoundsException if the range [fromIndex, toIndex] is not included in [0, size()) or if the range is larger than 8 bytes
      */
     public long bytesInRange(int fromIndex, int toIndex) {
         Objects.checkFromToIndex(fromIndex, toIndex, size());
-        checkArgument(toIndex - fromIndex <= Long.BYTES);
+        checkArgument(toIndex - fromIndex < Long.BYTES);
         long result = 0;
         for (int i = fromIndex; i < toIndex; i++) {
             result = result << Byte.SIZE | byteAt(i);
@@ -106,6 +102,6 @@ public final class ByteString {
      */
     @Override
     public String toString() {
-        return HexFormat.of().withUpperCase().formatHex(bytes);
+        return parser.formatHex(bytes);
     }
 }

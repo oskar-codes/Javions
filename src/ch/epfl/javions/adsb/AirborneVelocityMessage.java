@@ -18,6 +18,17 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress, double speed,
                                       double trackOrHeading) implements Message {
+    private static final int DNS_POSITION = 10;
+    private static final int DEW_POSITION = 21;
+    private static final int VNS_POSITION = 0;
+    private static final int VNS_SIZE = 10;
+    private static final int VEW_POSITION = 11;
+    private static final int VEW_SIZE = 10;
+
+    private static final int AS_POSITION = 0;
+    private static final int AS_SIZE = 10;
+    private static final int HDG_POSITION = 11;
+    private static final int HDG_SIZE = 10;
     public AirborneVelocityMessage {
         if (icaoAddress == null) throw new NullPointerException("ICAO address is null");
         checkArgument(timeStampNs >= 0 && speed >= 0 && trackOrHeading >= 0);
@@ -34,11 +45,11 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         int data = Bits.extractUInt(rawMessage.payload(), 21, 22);
 
         if (subtype == 1 || subtype == 2) {
-            int dns = Bits.extractUInt(data, 10, 1);
-            int vns = Bits.extractUInt(data, 0, 10) - 1;
+            boolean dns = Bits.testBit(data, DNS_POSITION);
+            int vns = Bits.extractUInt(data, VNS_POSITION, VNS_SIZE) - 1;
 
-            int dew = Bits.extractUInt(data, 21, 1);
-            int vew = Bits.extractUInt(data, 11, 10) - 1;
+            boolean dew = Bits.testBit(data, DEW_POSITION);
+            int vew = Bits.extractUInt(data, VEW_POSITION, VEW_SIZE) - 1;
 
             if (vns == -1 || vew == -1) return null;
 
@@ -47,8 +58,8 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
             // Converts the result to m/s
             double convertedSpeed = Units.convert(speed, Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 10d / 36d;
 
-            if (dns == 1) vns = -vns;
-            if (dew == 1) vew = -vew;
+            if (dns) vns = -vns;
+            if (dew) vew = -vew;
 
             double heading = Math.atan2(vew, vns);
             if (heading < 0) heading += 2 * Math.PI;
@@ -59,10 +70,10 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
         if (subtype == 3 || subtype == 4) {
             boolean sh = Bits.testBit(data, 21);
             if (sh) {
-                long hdg = Integer.toUnsignedLong(Bits.extractUInt(data, 11, 10));
+                long hdg = Integer.toUnsignedLong(Bits.extractUInt(data, HDG_POSITION, HDG_SIZE));
                 double result = Units.convertFrom(Math.scalb(hdg, -10), Units.Angle.TURN);
 
-                long as = Bits.extractUInt(data, 0, 10) - 1;
+                long as = Bits.extractUInt(data, AS_POSITION, AS_SIZE) - 1;
                 if (as == -1) return null;
                 double speed = as * (subtype == 4 ? 4 : 1);
 

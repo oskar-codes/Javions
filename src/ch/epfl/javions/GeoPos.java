@@ -9,6 +9,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  */
 public record GeoPos(int longitudeT32, int latitudeT32) {
+    private final static int MAX_LATITUDE_T32 = 1 << 30;
     /**
      * Creates a new GeoPos
      *
@@ -27,7 +28,7 @@ public record GeoPos(int longitudeT32, int latitudeT32) {
      * @return true if the latitude is in the range [-2^30, 2^30]
      */
     public static boolean isValidLatitudeT32(int lat) {
-        return lat >= -Math.pow(2, 30) && lat <= Math.pow(2, 30);
+        return lat >= -MAX_LATITUDE_T32 && lat <= MAX_LATITUDE_T32;
     }
 
     /**

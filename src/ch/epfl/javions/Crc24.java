@@ -7,11 +7,14 @@ package ch.epfl.javions;
  * @author Oskar Zanota (361595)
  */
 public final class Crc24 {
-    // Default CRC generator
+    /**
+     * The default generator used for the CRC-24 calculation
+     */
     public static final int GENERATOR = 0xFFF409; // 1111_1111_1111_0100_0000_1001
+    private static final int SIZE = 256;
+
     // Table for the crc method, generated with the crc_bitwise method in buildTable
-    private final int[] table = new int[256];
-    private final int[] bitwiseTable;
+    private final int[] table = new int[SIZE];
 
     /**
      * Constructor for the Crc24 class, generates the table for the crc method
@@ -19,17 +22,15 @@ public final class Crc24 {
      * @param generator the generator to use for the CRC-24 calculation
      */
     public Crc24(int generator) {
-        // Generator in use by the methods
-        this.bitwiseTable = new int[]{0, generator & 0xffffff};
-        buildTable();
+        buildTable(table, generator);
     }
 
     /**
      * Builds the CRC lookup table for the crc method
      */
-    private void buildTable() {
-        for (int i = 0; i < 256; i++) {
-            table[i] = crc_bitwise(new byte[]{(byte) i});
+    private static void buildTable(int[] table, int generator) {
+        for (int i = 0; i < SIZE; i++) {
+            table[i] = crc_bitwise(new byte[]{(byte) i}, generator);
         }
     }
 
@@ -39,11 +40,10 @@ public final class Crc24 {
      * @param message the byte array to calculate the CRC-24 of
      * @return the CRC-24 of the byte array as an int
      */
-    private int crc_bitwise(byte[] message) {
+    private static int crc_bitwise(byte[] message, int generator) {
         int crc = 0;
 
-        //TODO faudrait faire la double boucle de l'etape 3 plutot que d'augmenter le message parce que y a moyen que
-        // ca affecte la performance et qu'on perde des points
+        int[] bitwiseTable = new int[]{0, Bits.extractUInt(generator, 0, 24)};
         
         // Calculates the augmented message, with three 0 bytes at the end
         byte[] augmented = new byte[message.length + 3];
@@ -58,7 +58,7 @@ public final class Crc24 {
         }
 
         // Returns the 6 least significant bytes of the CRC-24
-        return crc & 0xffffff;
+        return Bits.extractUInt(crc, 0, 24);
     }
 
     /**
@@ -72,6 +72,9 @@ public final class Crc24 {
         byte[] augmented = new byte[message.length + 3];
         System.arraycopy(message, 0, augmented, 0, message.length);
 
+        // TODO: efficient algorithm
+        // And use Byte.SIZE instead of 8
+
         // Calculates the CRC-24 of the augmented message
         int crc = 0;
         for (byte o : augmented) {
@@ -79,7 +82,7 @@ public final class Crc24 {
         }
 
         // Returns the 6 least significant bytes of the CRC-24
-        return crc & 0xffffff;
+        return Bits.extractUInt(crc, 0, 24);
     }
 
 }

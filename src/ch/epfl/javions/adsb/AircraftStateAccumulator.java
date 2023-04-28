@@ -13,6 +13,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
     private final T stateSetter;
     private AirbornePositionMessage lastEvenMessage;
     private AirbornePositionMessage lastOddMessage;
+    private static final double MAX_TIME_DELTA = 1e10;
 
     /**
      * Constructs an accumulator for aircraft state.
@@ -52,7 +53,7 @@ public class AircraftStateAccumulator<T extends AircraftStateSetter> {
                 } else {
                     lastOddMessage = apm;
                 }
-                if (lastEvenMessage != null && lastOddMessage != null && Math.abs(lastEvenMessage.timeStampNs() - lastOddMessage.timeStampNs()) <= 1e10) {
+                if (lastEvenMessage != null && lastOddMessage != null && Math.abs(lastEvenMessage.timeStampNs() - lastOddMessage.timeStampNs()) <= MAX_TIME_DELTA) {
                     GeoPos position = CprDecoder.decodePosition(lastEvenMessage.x(), lastEvenMessage.y(), lastOddMessage.x(), lastOddMessage.y(), apm.parity());
                     if (position != null) stateSetter.setPosition(position);
                 }

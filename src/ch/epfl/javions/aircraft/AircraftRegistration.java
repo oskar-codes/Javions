@@ -12,7 +12,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public record AircraftRegistration(String string) {
     // The pattern for the registration of an aircraft
-    static final Pattern PATTERN = Pattern.compile("[A-Z0-9 .?/_+-]+");
+    private static final Pattern PATTERN = Pattern.compile("[A-Z0-9 .?/_+-]+");
 
     /**
      * Constructs an AircraftRegistration object with the given string.
@@ -20,6 +20,6 @@ public record AircraftRegistration(String string) {
      * @param string the string representing the registration of an aircraft
      */
     public AircraftRegistration {
-        checkArgument(PATTERN.matcher(string).matches() && string.length() != 0);
+        checkArgument(PATTERN.matcher(string).matches());
     }
 }

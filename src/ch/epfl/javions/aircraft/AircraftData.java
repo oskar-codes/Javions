@@ -21,6 +21,7 @@ public record AircraftData(AircraftRegistration registration,
      * @param model                  must not be null
      * @param description            must not be null
      * @param wakeTurbulenceCategory must not be null
+     * @throws NullPointerException if any of the arguments are null
      */
     public AircraftData {
         Objects.requireNonNull(registration);

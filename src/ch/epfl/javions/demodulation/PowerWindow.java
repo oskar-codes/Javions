@@ -2,29 +2,28 @@ package ch.epfl.javions.demodulation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * A window of a given size on a sequence of power samples calculated by PowerComputer, given a stream of bytes.
- *
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
 public class PowerWindow {
-    public static final int BATCH_SIZE = (int) Math.pow(2, 16);
+    public static final int BATCH_SIZE = 1 << 16;
     private final int windowSize;
-    private long position = 0;
-    private long actualPosition = 0;
+    private long position;
+    private long actualPosition;
     private final PowerComputer computer;
-    private final int[] windowA;
-    private final int[] windowB;
-    private boolean shouldFillB = true;
+    private int[] windowA;
+    private int[] windowB;
+    private boolean shouldFillB;
     private int lastAmountRead;
 
     /**
      * Creates a new PowerWindow of the given size, given a stream of bytes.
-     *
      * @param stream     the stream of bytes
      * @param windowSize the size of the window
      * @throws IOException if an I/O error occurs
@@ -36,6 +35,9 @@ public class PowerWindow {
         this.windowA = new int[BATCH_SIZE];
         this.windowB = new int[BATCH_SIZE];
 
+        this.position = this.actualPosition = 0;
+        this.shouldFillB = true;
+
         this.computer = new PowerComputer(stream, BATCH_SIZE);
 
         lastAmountRead = computer.readBatch(windowA);
@@ -43,7 +45,6 @@ public class PowerWindow {
 
     /**
      * Returns the size of the window.
-     *
      * @return the size of the window
      */
     public int size() {
@@ -52,7 +53,6 @@ public class PowerWindow {
 
     /**
      * Returns the position of the window.
-     *
      * @return the position of the window
      */
     public long position() {
@@ -61,11 +61,10 @@ public class PowerWindow {
 
     /**
      * Returns true if the window is full, false otherwise.
-     *
      * @return true if the window is full, false otherwise
      */
     public boolean isFull() {
-        return position + windowSize <= lastAmountRead + Math.scalb(1, 16);
+        return position + windowSize <= lastAmountRead + BATCH_SIZE;
     }
 
     //                              windowSize
@@ -78,14 +77,14 @@ public class PowerWindow {
 
     /**
      * Returns the power at the given index in the window.
-     *
      * @param i the index
      * @return the power at the given index in the window
      */
     public int get(int i) {
-        if (i < 0 || i >= windowSize) throw new IndexOutOfBoundsException();
-        if (position + i >= BATCH_SIZE) return windowB[(int) (i - (BATCH_SIZE - position))];
-        return windowA[(int) (position + i)];
+        Objects.checkIndex(i, windowSize);
+        return position + i >= BATCH_SIZE
+                ? windowB[(int) (i - (BATCH_SIZE - position))]
+                : windowA[(int) (position + i)];
     }
 
     /**
@@ -106,7 +105,12 @@ public class PowerWindow {
         /// If the first window is full and the second one is full, shift the windows.
         if (position + windowSize >= 2L * BATCH_SIZE) {
             position -= BATCH_SIZE;
-            System.arraycopy(windowB, 0, windowA, 0, BATCH_SIZE);
+
+            // Swap the windows.
+            int[] temp = windowA;
+            windowA = windowB;
+            windowB = temp;
+
             lastAmountRead = computer.readBatch(windowB);
         }
     }

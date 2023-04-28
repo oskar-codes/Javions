@@ -15,6 +15,6 @@ public record CallSign(String string) {
     static final Pattern PATTERN = Pattern.compile("[A-Z0-9 ]{0,8}");
 
     public CallSign {
-        checkArgument(PATTERN.matcher(string).matches() || string.length() == 0);
+        checkArgument(PATTERN.matcher(string).matches() || string.isEmpty());
     }
 }

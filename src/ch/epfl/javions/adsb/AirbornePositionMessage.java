@@ -4,6 +4,8 @@ import ch.epfl.javions.Bits;
 import ch.epfl.javions.Units;
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+import java.util.Objects;
+
 import static ch.epfl.javions.Bits.extractUInt;
 import static ch.epfl.javions.Preconditions.checkArgument;
 
@@ -19,17 +21,18 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
-public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress, double altitude, int parity, double x,
+public record AirbornePositionMessage(long timeStampNs,
+                                      IcaoAddress icaoAddress,
+                                      double altitude,
+                                      int parity,
+                                      double x,
                                       double y) implements Message {
     public AirbornePositionMessage {
-        if (icaoAddress == null) {
-            throw new NullPointerException("Arguments cannot be null");
-        }
-        //TODO : ce formatage me parait plus lisible pour les conditions
-        checkArgument(timeStampNs >= 0 &&
-                     (parity == 0 || parity == 1) &&
-                      x >= 0 && x < 1 &&
-                      y >= 0 && y < 1);
+        Objects.requireNonNull(icaoAddress);
+        checkArgument(timeStampNs >= 0
+                  && (parity == 0 || parity == 1)
+                  && x >= 0 && x < 1
+                  && y >= 0 && y < 1);
     }
 
     /**
@@ -77,6 +80,7 @@ public record AirbornePositionMessage(long timeStampNs, IcaoAddress icaoAddress,
             altitude = Units.convertFrom(-1000 + 25 * n, Units.Length.FOOT);
         } else {
             // Manually untangle the bits
+            // TODO: find a better way to do this
             long untangled = (long) bitValue(altitudeData, 4) << 11
                     | (long) bitValue(altitudeData, 2) << 10
                     | (long) bitValue(altitudeData, 0) << 9

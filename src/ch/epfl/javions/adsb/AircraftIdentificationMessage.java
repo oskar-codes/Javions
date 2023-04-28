@@ -2,6 +2,8 @@ package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.aircraft.IcaoAddress;
 
+import java.util.Objects;
+
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
@@ -14,12 +16,15 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
-public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAddress, int category, CallSign callSign) implements Message {
-
+public record AircraftIdentificationMessage(long timeStampNs,
+                                            IcaoAddress icaoAddress,
+                                            int category,
+                                            CallSign callSign) implements Message {
+    private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ".toCharArray();
+    private static final int PAYLOAD_SIZE = 48;
     public AircraftIdentificationMessage {
-        if (icaoAddress == null || callSign == null) {
-            throw new NullPointerException("Arguments cannot be null");
-        }
+        Objects.requireNonNull(icaoAddress);
+        Objects.requireNonNull(callSign);
         checkArgument(timeStampNs >= 0);
     }
 
@@ -31,27 +36,28 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
      */
     public static AircraftIdentificationMessage of(RawMessage rawMessage) {
 
+        long payload = rawMessage.payload();
+
         int first = 14 - rawMessage.typeCode();
-        int second = (int) (rawMessage.payload() >>> 48 & 0b111);
+        int second = (int) (payload >>> PAYLOAD_SIZE & 0b111);
 
         int category = (first << 4) | second;
 
-        long cs = rawMessage.payload() & (long) Math.pow(2, 48) - 1;
+        long cs = payload & (1L << PAYLOAD_SIZE) - 1;
 
         StringBuilder string = new StringBuilder();
 
         // Constructs the CallSign from the 48 bits of the payload
-        char[] alphabet = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        for (int i = 48; i > 0; i -= 6) {
+        for (int i = PAYLOAD_SIZE; i > 0; i -= 6) {
             int c = (int) (cs >>> (i - 6)) & 0b111111;
 
             if (c >= 1 && c <= 26) {
-                string.append(alphabet[c - 1]);
+                string.append(ALPHABET[c - 1]);
                 continue;
             }
 
             if (c >= 48 && c <= 57) {
-                string.append(alphabet[c - 22]);
+                string.append(ALPHABET[c - 22]);
                 continue;
             }
 
@@ -63,7 +69,8 @@ public record AircraftIdentificationMessage(long timeStampNs, IcaoAddress icaoAd
             return null;
         }
 
-        CallSign callSign = new CallSign(string.toString().trim());
+        String TRAILING_SPACES = "\\s+$";
+        CallSign callSign = new CallSign(string.toString().replaceAll(TRAILING_SPACES, ""));
         return new AircraftIdentificationMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), category, callSign);
     }
 

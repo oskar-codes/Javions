@@ -12,7 +12,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public record AircraftTypeDesignator(String string) {
     // The pattern for the aircraft type designator
-    static final Pattern PATTERN = Pattern.compile("[A-Z0-9]{2,4}");
+    private static final Pattern PATTERN = Pattern.compile("[A-Z0-9]{2,4}");
 
     /**
      * Constructs an AircraftTypeDesignator from a string.
@@ -20,6 +20,6 @@ public record AircraftTypeDesignator(String string) {
      * @param string the string to construct the AircraftTypeDesignator from
      */
     public AircraftTypeDesignator {
-        checkArgument(PATTERN.matcher(string).matches() || string.length() == 0);
+        checkArgument(PATTERN.matcher(string).matches() || string.isEmpty());
     }
 }

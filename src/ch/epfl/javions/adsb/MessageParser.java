@@ -6,7 +6,7 @@ package ch.epfl.javions.adsb;
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
-public class MessageParser {
+public final class MessageParser {
     private MessageParser() {}
 
     /**

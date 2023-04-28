@@ -47,6 +47,9 @@ public final class Units {
     }
 
 
+    /**
+     * Contains constants for units of length
+     */
     public static class Length {
         private Length() {
         }
@@ -60,6 +63,9 @@ public final class Units {
         public static final double FOOT = 12 * INCH;
     }
 
+    /**
+     * Contains constants for units of angle
+     */
     public static class Angle {
         private Angle() {
         }
@@ -70,6 +76,9 @@ public final class Units {
         public static final double T32 = Math.scalb(TURN, -32);
     }
 
+    /**
+     * Contains constants for units of time
+     */
     public static class Time {
         private Time() {
         }
@@ -79,6 +88,9 @@ public final class Units {
         public static final double HOUR = 60 * MINUTE;
     }
 
+    /**
+     * Contains constants for units of speed
+     */
     public static class Speed {
         private Speed() {
         }

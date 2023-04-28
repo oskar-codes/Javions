@@ -11,7 +11,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
-public class CprDecoder {
+public final class CprDecoder {
     private CprDecoder() {
     }
 
@@ -29,6 +29,9 @@ public class CprDecoder {
      * @return the decoded position as a GeoPos
      */
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
+
+        // TODO: latitude non centrée
+
         checkArgument(mostRecent == 0 || mostRecent == 1);
 
         double zLat = Math.rint(y0 * ZP1 - y1 * ZP0);
@@ -46,10 +49,10 @@ public class CprDecoder {
         double p1T32 = Units.convert(p1, Units.Angle.TURN, Units.Angle.T32);
 
         double A1 = Math.acos(
-                1 - ((1 - Math.cos(2 * Math.PI * (1 / ZP0))) / Math.pow(Math.cos(p0Rad), 2))
+                1 - ((1 - Math.cos(Units.Angle.TURN * (1 / ZP0))) / Math.pow(Math.cos(p0Rad), 2))
         );
         double A2 = Math.acos(
-                1 - ((1 - Math.cos(2 * Math.PI * (1 / ZP0))) / Math.pow(Math.cos(p1Rad), 2))
+                1 - ((1 - Math.cos(Units.Angle.TURN * (1 / ZP0))) / Math.pow(Math.cos(p1Rad), 2))
         );
 
         int ZL0 = Double.isNaN(A1) ? 1 : (int) Math.floor((2 * Math.PI) / A1);

@@ -13,8 +13,8 @@ import java.io.InputStream;
  */
 public class AdsbDemodulator {
     private final PowerWindow window;
-    private final byte[] byteMessage = new byte[14];
-    private int previous = 0;
+    private final static int SIZE = 14;
+    private final byte[] byteMessage;
     private long time = 0;
 
     /**
@@ -25,6 +25,7 @@ public class AdsbDemodulator {
      */
     public AdsbDemodulator(InputStream samplesStream) throws IOException {
         this.window = new PowerWindow(samplesStream, 1200);
+        this.byteMessage = new byte[SIZE];
     }
 
     /**
@@ -37,6 +38,7 @@ public class AdsbDemodulator {
         int high;
         int low;
         int next;
+        int previous = 0;
         while (window.isFull()) {
             high = window.get(0) + window.get(10) + window.get(35) + window.get(45);
             low = window.get(5) + window.get(15) + window.get(20) + window.get(25) + window.get(30) + window.get(40);
