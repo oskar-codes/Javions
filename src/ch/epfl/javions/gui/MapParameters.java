@@ -3,11 +3,24 @@ package ch.epfl.javions.gui;
 import ch.epfl.javions.Math2;
 import javafx.beans.property.*;
 
+/**
+ * Represents the parameters of a map, i.e. the zoom level and the xMin and yMin coordinates
+ * of the map's top-left corner
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public final class MapParameters {
     private final IntegerProperty zoom = new SimpleIntegerProperty();
     private final DoubleProperty xMin = new SimpleDoubleProperty();
     private final DoubleProperty yMin = new SimpleDoubleProperty();
 
+    /**
+     * Constructs a new MapParameters object with the given zoom level and the given xMin and yMin coordinates
+     * @param zoom - the zoom level
+     * @param xMin - the xMin coordinate
+     * @param yMin - the yMin coordinate
+     * @throws IllegalArgumentException if the zoom level is not between 6 and 19
+     */
     public MapParameters(int zoom, double xMin, double yMin) {
         if (zoom < 6 || zoom > 19) {
             throw new IllegalArgumentException("Zoom level must be between 6 and 19");
@@ -38,10 +51,20 @@ public final class MapParameters {
         return yMin.get();
     }
 
+    /**
+     * Scrolls the map by the given delta (x,y) vector
+     * @param x - the x delta
+     * @param y - the y delta
+     */
     public void scroll(double x, double y) {
         this.xMin.set(getxMin() + x);
         this.yMin.set(getyMin() + y);
     }
+
+    /**
+     * Changes the zoom level of the map
+     * @param zoom - the zoom delta
+     */
     public void changeZoomLevel(int zoom) {
         int previousZoom = getZoom();
         this.zoom.set(Math2.clamp(6, getZoom() + zoom, 19));
