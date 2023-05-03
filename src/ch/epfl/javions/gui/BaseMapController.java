@@ -4,7 +4,9 @@ import ch.epfl.javions.GeoPos;
 import ch.epfl.javions.WebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,7 +28,6 @@ public final class BaseMapController {
     private final Pane pane;
     private final Canvas canvas;
     private boolean redrawNeeded = true;
-    private Point2D lastMousePos = null;
 
     /**
      * Creates a new BaseMapController.
@@ -69,16 +70,17 @@ public final class BaseMapController {
             mapParameters.scroll((int) -e.getX(), (int) -e.getY());
         });
 
+        ObjectProperty<Point2D> lastMousePos = new SimpleObjectProperty<>();
         // Move the pane on mouse drag
         pane.setOnMousePressed(e -> {
             pane.requestFocus();
             pane.setCursor(CLOSED_HAND);
-            lastMousePos = new Point2D(e.getX(), e.getY());
+            lastMousePos.set(new Point2D(e.getX(), e.getY()));
         });
         pane.setOnMouseReleased(e -> pane.setCursor(DEFAULT));
         pane.setOnMouseDragged(e -> {
-            mapParameters.scroll((int) (lastMousePos.getX() - e.getX()), (int) (lastMousePos.getY() - e.getY()));
-            lastMousePos = new Point2D(e.getX(), e.getY());
+            mapParameters.scroll((int) (lastMousePos.get().getX() - e.getX()), (int) (lastMousePos.get().getY() - e.getY()));
+            lastMousePos.set(new Point2D(e.getX(), e.getY()));
         });
 
         // Redraw the map when the map parameters change

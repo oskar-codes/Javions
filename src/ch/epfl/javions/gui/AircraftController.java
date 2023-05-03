@@ -8,18 +8,26 @@ import ch.epfl.javions.aircraft.IcaoAddress;
 import ch.epfl.javions.aircraft.WakeTurbulenceCategory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static javafx.scene.paint.CycleMethod.NO_CYCLE;
 
 public final class AircraftController {
     private final MapParameters mapParameters;
@@ -72,12 +80,22 @@ public final class AircraftController {
         );
 
 
+        s.trajectoryProperty().addListener(((ListChangeListener<ObservableAircraftState.AirbornePos>) change -> {
+            updateTrajectory(s, trajectory);
+        }));
+        mapParameters.zoomProperty().addListener((p, o, n) -> updateTrajectory(s, trajectory));
+
+        trajectory.layoutXProperty().bind(mapParameters.xMinProperty().negate());
+        trajectory.layoutYProperty().bind(mapParameters.yMinProperty().negate());
+
         Group info = new Group();
 
         Group label = new Group();
         label.getStyleClass().add("label");
         label.visibleProperty().bind(
-                Bindings.createBooleanBinding(() -> mapParameters.getZoom() >= 11, mapParameters.zoomProperty())
+                Bindings.createBooleanBinding(() -> {
+                    return mapParameters.getZoom() >= 11 || state.get() != null && state.get().getIcaoAddress().equals(s.getIcaoAddress());
+                }, mapParameters.zoomProperty(), state)
         );
 
         Rectangle rect = new Rectangle();
@@ -132,17 +150,50 @@ public final class AircraftController {
 
         container.getChildren().addAll(trajectory, info);
 
-        container.layoutXProperty().bind(
+        info.layoutXProperty().bind(
                 Bindings.createDoubleBinding(() -> WebMercator.x(mapParameters.getZoom(), s.getPosition().longitude()) - mapParameters.getxMin(),
                         mapParameters.zoomProperty(), s.positionProperty(), mapParameters.xMinProperty())
         );
 
-        container.layoutYProperty().bind(
+        info.layoutYProperty().bind(
                 Bindings.createDoubleBinding(() -> WebMercator.y(mapParameters.getZoom(), s.getPosition().latitude()) - mapParameters.getyMin(),
                         mapParameters.zoomProperty(), s.positionProperty(), mapParameters.yMinProperty())
         );
 
+
+
         pane.getChildren().add(container);
+    }
+
+    private void updateTrajectory(ObservableAircraftState s, Group trajectory) {
+        trajectory.getChildren().clear();
+        List<ObservableAircraftState.AirbornePos> trajectoryPoints = s.getTrajectory();
+        for (int i = 0; i < trajectoryPoints.size() - 1; i++) {
+            ObservableAircraftState.AirbornePos p1 = trajectoryPoints.get(i);
+            ObservableAircraftState.AirbornePos p2 = trajectoryPoints.get(i + 1);
+
+            double x1 = WebMercator.x(mapParameters.getZoom(), p1.position().longitude());
+            double y1 = WebMercator.y(mapParameters.getZoom(), p1.position().latitude());
+            double x2 = WebMercator.x(mapParameters.getZoom(), p2.position().longitude());
+            double y2 = WebMercator.y(mapParameters.getZoom(), p2.position().latitude());
+
+            Line path = new Line(
+                    x1, y1,
+                    x2, y2
+            );
+
+            if (p1.altitude() == p2.altitude()) {
+                path.setStroke(ColorRamp.PLASMA.at(Math.pow(p1.altitude() / 12000, 1d/3d)));
+            } else {
+                Color c1 = ColorRamp.PLASMA.at(Math.pow(p1.altitude() / 12000, 1d/3d));
+                Color c2 = ColorRamp.PLASMA.at(Math.pow(p2.altitude() / 12000, 1d/3d));
+                Stop s1 = new Stop(0, c1);
+                Stop s2 = new Stop(1, c2);
+                path.setStroke(new LinearGradient(0, 0, 1, 0, true, NO_CYCLE, s1, s2));
+            }
+
+            trajectory.getChildren().add(path);
+        }
     }
 
     public Pane pane() {

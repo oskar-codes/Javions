@@ -15,7 +15,7 @@ import static javafx.collections.FXCollections.unmodifiableObservableList;
 
 public final class ObservableAircraftState implements AircraftStateSetter {
 
-    private record AirbornePos(GeoPos position, double altitude) {
+    public record AirbornePos(GeoPos position, double altitude) {
     }
 
     private final IcaoAddress icaoAddress;
