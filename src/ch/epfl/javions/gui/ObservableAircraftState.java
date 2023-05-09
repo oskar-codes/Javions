@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 
+import static java.lang.Double.NaN;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.unmodifiableObservableList;
 
@@ -27,8 +28,8 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     private final ObservableList<AirbornePos> trajectory = observableArrayList();
     private final ObservableList<AirbornePos> unmodifiableTrajectory = unmodifiableObservableList(trajectory);
     private long lastTrajectoryAdd = -1;
-    private final DoubleProperty altitude = new SimpleDoubleProperty();
-    private final DoubleProperty velocity = new SimpleDoubleProperty();
+    private final DoubleProperty altitude = new SimpleDoubleProperty(NaN);
+    private final DoubleProperty velocity = new SimpleDoubleProperty(NaN);
     private final DoubleProperty trackOrHeading = new SimpleDoubleProperty();
 
     public ObservableAircraftState(IcaoAddress icaoAddress, AircraftData data) {
@@ -100,7 +101,6 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     public ArrayList<AirbornePos> getTrajectory() {
         return new ArrayList<>(trajectory);
     }
-
 
     public ReadOnlyDoubleProperty altitudeProperty() {
         return altitude;

@@ -56,6 +56,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
             double speed = Math.hypot(vew, vns) * (subtype == 2 ? 4 : 1);
 
             // Converts the result to m/s
+            // Todo use Units to convert
             double convertedSpeed = Units.convert(speed, Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 10d / 36d;
 
             if (dns) vns = -vns;

@@ -38,7 +38,7 @@ public final class BaseMapController {
         this.tileManager = tileManager;
         this.mapParameters = mapParameters;
 
-        // Setup the pane and canvas
+        // Set up the pane and canvas
         this.pane = new Pane();
         this.canvas = new Canvas();
         this.pane.getChildren().add(canvas);
@@ -108,7 +108,7 @@ public final class BaseMapController {
     }
 
     /**
-     * Requests a redraw on the next pulse. This throttles the number of redraws to one per pulse (60 times per second).
+     * Requests a re-draw on the next pulse. This throttles the number of redraws to one per pulse (60 times per second).
      */
     private void redrawOnNextPulse() {
         redrawNeeded = true;

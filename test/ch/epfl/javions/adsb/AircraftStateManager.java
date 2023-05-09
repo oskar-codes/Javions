@@ -46,5 +46,6 @@ public final class AircraftStateManager {
 
     public void purge(Message message) {
         states.removeIf(state -> state.getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
+        table.entrySet().removeIf(entry -> entry.getValue().stateSetter().getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
     }
 }

@@ -29,6 +29,12 @@ import java.util.Objects;
 
 import static javafx.scene.paint.CycleMethod.NO_CYCLE;
 
+/**
+ * Controller for the aircraft.
+ *
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public final class AircraftController {
     private final MapParameters mapParameters;
     private final ObjectProperty<ObservableAircraftState> state;
@@ -59,69 +65,39 @@ public final class AircraftController {
         });
     }
 
-    // TODO: extract in several sub-methods
     private void createAircraftGroup(ObservableAircraftState s) {
         Group container = new Group();
-
-        container.setId(s.getIcaoAddress().string());
         aircraftGroups.put(s.getIcaoAddress(), container);
 
+        container.setId(s.getIcaoAddress().string());
         container.viewOrderProperty().bind(s.altitudeProperty().negate());
 
-        Group trajectory = new Group();
-        trajectory.getStyleClass().add("trajectory");
-        trajectory.visibleProperty().bind(
-                Bindings.createBooleanBinding(() -> {
-                    if (state.get() == null) {
-                        return false;
-                    }
-                    return state.get().getIcaoAddress().equals(s.getIcaoAddress());
-                }, state)
-        );
+        Group descriptionBox = createDescriptionBox(s);
+        Group trajectory = createTrajectory(s);
+        container.getChildren().addAll(trajectory, descriptionBox);
 
+        pane.getChildren().add(container);
+    }
 
-        s.trajectoryProperty().addListener(((ListChangeListener<ObservableAircraftState.AirbornePos>) change -> {
-            updateTrajectory(s, trajectory);
-        }));
-        mapParameters.zoomProperty().addListener((p, o, n) -> updateTrajectory(s, trajectory));
-
-        trajectory.layoutXProperty().bind(mapParameters.xMinProperty().negate());
-        trajectory.layoutYProperty().bind(mapParameters.yMinProperty().negate());
-
+    private Group createDescriptionBox(ObservableAircraftState s) {
         Group info = new Group();
+        Group label = createLabel(s);
+        SVGPath path = createIconSVG(s);
+        info.getChildren().addAll(label, path);
 
-        Group label = new Group();
-        label.getStyleClass().add("label");
-        label.visibleProperty().bind(
-                Bindings.createBooleanBinding(() -> {
-                    return mapParameters.getZoom() >= 11 || state.get() != null && state.get().getIcaoAddress().equals(s.getIcaoAddress());
-                }, mapParameters.zoomProperty(), state)
+        info.layoutXProperty().bind(
+                Bindings.createDoubleBinding(() -> WebMercator.x(mapParameters.getZoom(), s.getPosition().longitude()) - mapParameters.getxMin(),
+                        mapParameters.zoomProperty(), s.positionProperty(), mapParameters.xMinProperty())
         );
 
-        Rectangle rect = new Rectangle();
-        Text txt = new Text();
-
-        rect.widthProperty().bind(
-                txt.layoutBoundsProperty().map(b -> b.getWidth() + 4));
-        rect.heightProperty().bind(
-                txt.layoutBoundsProperty().map(b -> b.getHeight() + 4));
-        txt.textProperty().bind(
-                Bindings.createStringBinding(() -> {
-                    String identifier = s.getAircraftData() != null ?
-                              s.getAircraftData().registration().string() :
-                              s.getCallSign() != null ? s.getCallSign().string() :
-                              s.getIcaoAddress().string();
-
-                    String speed = String.valueOf(
-                            (int)s.getVelocity() * 3600 / 1000
-                    );
-                    String altitude = String.valueOf((int)s.getAltitude());
-                    return identifier + "\n" + speed + "km/h\u2002" + altitude + "m";
-                }, s.altitudeProperty(), s.velocityProperty(), s.callSignProperty())
+        info.layoutYProperty().bind(
+                Bindings.createDoubleBinding(() -> WebMercator.y(mapParameters.getZoom(), s.getPosition().latitude()) - mapParameters.getyMin(),
+                        mapParameters.zoomProperty(), s.positionProperty(), mapParameters.yMinProperty())
         );
+        return info;
+    }
 
-        label.getChildren().addAll(rect, txt);
-
+    private SVGPath createIconSVG(ObservableAircraftState s) {
         SVGPath path = new SVGPath();
         path.getStyleClass().add("aircraft");
         path.fillProperty().bind(
@@ -145,24 +121,75 @@ public final class AircraftController {
             state.set(s);
             e.consume();
         });
+        return path;
+    }
 
-        info.getChildren().addAll(label, path);
-
-        container.getChildren().addAll(trajectory, info);
-
-        info.layoutXProperty().bind(
-                Bindings.createDoubleBinding(() -> WebMercator.x(mapParameters.getZoom(), s.getPosition().longitude()) - mapParameters.getxMin(),
-                        mapParameters.zoomProperty(), s.positionProperty(), mapParameters.xMinProperty())
+    private Group createLabel(ObservableAircraftState s) {
+        Group label = new Group();
+        label.getStyleClass().add("label");
+        label.visibleProperty().bind(
+                Bindings.createBooleanBinding(() ->
+                        mapParameters.getZoom() >= 11 ||
+                        state.get() != null &&
+                        state.get().getIcaoAddress().equals(s.getIcaoAddress()),
+                mapParameters.zoomProperty(), state)
         );
 
-        info.layoutYProperty().bind(
-                Bindings.createDoubleBinding(() -> WebMercator.y(mapParameters.getZoom(), s.getPosition().latitude()) - mapParameters.getyMin(),
-                        mapParameters.zoomProperty(), s.positionProperty(), mapParameters.yMinProperty())
+        Rectangle rect = new Rectangle();
+        Text txt = new Text();
+
+        rect.widthProperty().bind(
+                txt.layoutBoundsProperty().map(b -> b.getWidth() + 4));
+        rect.heightProperty().bind(
+                txt.layoutBoundsProperty().map(b -> b.getHeight() + 4));
+        txt.textProperty().bind(
+                Bindings.createStringBinding(() -> {
+                    String identifier = s.getAircraftData() != null ?
+                              s.getAircraftData().registration().string() :
+                              s.getCallSign() != null ? s.getCallSign().string() :
+                              s.getIcaoAddress().string();
+
+                    String speed;
+                    if (Double.isNaN(s.getVelocity())) {
+                        speed = "?";
+                    } else {
+                        speed = String.valueOf(
+                                (int) s.getVelocity() * 3600 / 1000
+                        );
+                    }
+                    String altitude;
+                    if (Double.isNaN(s.getAltitude())) {
+                        altitude = "?";
+                    } else {
+                        altitude = String.valueOf((int) s.getAltitude());
+                    }
+
+                    return identifier + "\n" + speed + "km/h\u2002" + altitude + "m";
+                }, s.altitudeProperty(), s.velocityProperty(), s.callSignProperty())
         );
 
+        label.getChildren().addAll(rect, txt);
+        return label;
+    }
 
+    private Group createTrajectory(ObservableAircraftState s) {
+        Group trajectory = new Group();
+        trajectory.getStyleClass().add("trajectory");
+        trajectory.visibleProperty().bind(
+                Bindings.createBooleanBinding(() -> {
+                    if (state.get() == null) {
+                        return false;
+                    }
+                    return state.get().getIcaoAddress().equals(s.getIcaoAddress());
+                }, state)
+        );
 
-        pane.getChildren().add(container);
+        s.trajectoryProperty().addListener(((ListChangeListener<ObservableAircraftState.AirbornePos>) change -> updateTrajectory(s, trajectory)));
+        mapParameters.zoomProperty().addListener((p, o, n) -> updateTrajectory(s, trajectory));
+
+        trajectory.layoutXProperty().bind(mapParameters.xMinProperty().negate());
+        trajectory.layoutYProperty().bind(mapParameters.yMinProperty().negate());
+        return trajectory;
     }
 
     private void updateTrajectory(ObservableAircraftState s, Group trajectory) {
