@@ -141,7 +141,23 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         this.trackOrHeading.set(trackOrHeading);
     }
 
+    // TODO: write this with new method
     private void updateTrajectory() {
+//        if (!isNaN(getAltitude())) {
+//            trajectory.add(new AirbornePos(getPosition(), getAltitude()));
+//            lastTrajectoryAdd = getLastMessageTimeStampNs();
+//            return;
+//        }
+//        if (getPosition() == null) return;
+//        if (trajectory.size() == 0) {
+//            trajectory.add(new AirbornePos(getPosition(), getAltitude()));
+//            lastTrajectoryAdd = getLastMessageTimeStampNs();
+//            return;
+//        }
+//        if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
+//            trajectory.set(trajectory.size() - 1, new AirbornePos(getPosition(), getAltitude()));
+//        }
+
         if ((trajectory.size() == 0 || !trajectory.get(trajectory.size() - 1).position.equals(getPosition())
             ) && getPosition() != null) {
             trajectory.add(new AirbornePos(getPosition(), getAltitude()));

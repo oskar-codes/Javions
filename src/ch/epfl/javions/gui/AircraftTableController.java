@@ -59,11 +59,6 @@ public final class AircraftTableController {
                 table.requestFocus();
             }
         });
-        table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                setOnDoubleClick(state::set);
-            }
-        });
 
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
@@ -211,9 +206,9 @@ public final class AircraftTableController {
             }
             NumberFormat formatter = NumberFormat.getInstance();
             try {
-                Number aNumber = formatter.parse(a);
-                Number bNumber = formatter.parse(b);
-                return Double.compare(aNumber.doubleValue(), bNumber.doubleValue());
+                double aNumber = formatter.parse(a).doubleValue();
+                double bNumber = formatter.parse(b).doubleValue();
+                return (int) (aNumber - bNumber);
             } catch (ParseException e) {
                 throw new Error(e);
             }
