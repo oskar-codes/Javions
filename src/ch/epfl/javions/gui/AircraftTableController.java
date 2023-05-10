@@ -19,6 +19,8 @@ import java.util.function.Consumer;
 
 /**
  * Controller for the aircraft table.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
  */
 public final class AircraftTableController {
     private final TableView<ObservableAircraftState> table;
@@ -31,7 +33,6 @@ public final class AircraftTableController {
      */
     public AircraftTableController(ObservableSet<ObservableAircraftState> states, ObjectProperty<ObservableAircraftState> state) {
         Objects.requireNonNull(states);
-
 
         this.table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_SUBSEQUENT_COLUMNS);
@@ -82,14 +83,20 @@ public final class AircraftTableController {
      * Creates the columns of the table.
      */
     private void createColumns() {
+
+        /* ### TEXT COLUMNS ### */
+
+        // ICAO ADDRESS COLUMN
         TableColumn<ObservableAircraftState, String> icaoAddressColumn = new TableColumn<>("OACI");
         icaoAddressColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getIcaoAddress().string()));
         icaoAddressColumn.setPrefWidth(60);
 
+        // CALL SIGN COLUMN
         TableColumn<ObservableAircraftState, String> callSignColumn = new TableColumn<>("Indicatif");
         callSignColumn.setCellValueFactory(param -> param.getValue().callSignProperty().map(CallSign::string));
         callSignColumn.setPrefWidth(70);
 
+        // REGISTRATION COLUMN
         TableColumn<ObservableAircraftState, String> registrationColumn = new TableColumn<>("Immatriculation");
         registrationColumn.setCellValueFactory(param -> {
             if (param.getValue().getAircraftData() == null) {
@@ -99,6 +106,7 @@ public final class AircraftTableController {
         });
         registrationColumn.setPrefWidth(90);
 
+        // MODEL COLUMN
         TableColumn<ObservableAircraftState, String> modelColumn = new TableColumn<>("Modèle");
         modelColumn.setCellValueFactory(param -> {
             if (param.getValue().getAircraftData() == null) {
@@ -108,6 +116,7 @@ public final class AircraftTableController {
         });
         modelColumn.setPrefWidth(230);
 
+        // TYPE COLUMN
         TableColumn<ObservableAircraftState, String> typeColumn = new TableColumn<>("Type");
         typeColumn.setCellValueFactory(param -> {
             if (param.getValue().getAircraftData() == null) {
@@ -117,6 +126,7 @@ public final class AircraftTableController {
         });
         typeColumn.setPrefWidth(50);
 
+        // DESCRIPTION COLUMN
         TableColumn<ObservableAircraftState, String> descriptionColumn = new TableColumn<>("Description");
         descriptionColumn.setCellValueFactory(param -> {
             if (param.getValue().getAircraftData() == null) {
@@ -126,9 +136,12 @@ public final class AircraftTableController {
         });
         descriptionColumn.setPrefWidth(70);
 
+        /* ### NUMBER COLUMNS ### */
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
+
+        // LONGITUDE COLUMN
         TableColumn<ObservableAircraftState, String> longitudeColumn = new TableColumn<>("Longitude (°)");
         longitudeColumn.setCellValueFactory(param -> param.getValue().positionProperty().map(e -> {
-            NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
             formatter.setMinimumFractionDigits(4);
             formatter.setMaximumFractionDigits(4);
             double lon = Units.convertTo(param.getValue().positionProperty().get().longitude(), Units.Angle.DEGREE);
@@ -137,9 +150,9 @@ public final class AircraftTableController {
         longitudeColumn.setComparator(numberComparator());
         longitudeColumn.setPrefWidth(85);
 
+        // LATITUDE COLUMN
         TableColumn<ObservableAircraftState, String> latitudeColumn = new TableColumn<>("Latitude (°)");
         latitudeColumn.setCellValueFactory(param -> param.getValue().positionProperty().map(e -> {
-            NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
             formatter.setMinimumFractionDigits(4);
             formatter.setMaximumFractionDigits(4);
             double lat = Units.convertTo(param.getValue().positionProperty().get().latitude(), Units.Angle.DEGREE);
@@ -148,28 +161,24 @@ public final class AircraftTableController {
         latitudeColumn.setComparator(numberComparator());
         latitudeColumn.setPrefWidth(85);
 
+        // ALTITUDE COLUMN
         TableColumn<ObservableAircraftState, String> altitudeColumn = new TableColumn<>("Altitude (m)");
         altitudeColumn.setCellValueFactory(param -> param.getValue().altitudeProperty().map(e -> {
-            NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
             formatter.setMinimumFractionDigits(0);
             formatter.setMaximumFractionDigits(0);
             double alt = param.getValue().getAltitude();
-            if (Double.isNaN(alt)) {
-                return "?";
-            }
+            if (Double.isNaN(alt)) return "?";
             return formatter.format(alt);
         }));
         altitudeColumn.setComparator(numberComparator());
         altitudeColumn.setPrefWidth(85);
 
+        // SPEED COLUMN
         TableColumn<ObservableAircraftState, String> speedColumn = new TableColumn<>("Vitesse (km/h)");
         speedColumn.setCellValueFactory(param -> param.getValue().velocityProperty().map(e -> {
-            NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
             formatter.setMinimumFractionDigits(0);
             formatter.setMaximumFractionDigits(0);
-            if (Double.isNaN(param.getValue().getVelocity())) {
-                return "?";
-            }
+            if (Double.isNaN(param.getValue().getVelocity())) return "?";
             double speed = Units.convertTo(param.getValue().getVelocity(), Units.Speed.KILOMETER_PER_HOUR);
             return formatter.format(speed);
         }));
@@ -181,7 +190,8 @@ public final class AircraftTableController {
         altitudeColumn.getStyleClass().add("numeric");
         speedColumn.getStyleClass().add("numeric");
 
-        table.getColumns().addAll(icaoAddressColumn,
+        table.getColumns().addAll(
+                icaoAddressColumn,
                 callSignColumn,
                 registrationColumn,
                 modelColumn,
@@ -190,7 +200,8 @@ public final class AircraftTableController {
                 longitudeColumn,
                 latitudeColumn,
                 altitudeColumn,
-                speedColumn);
+                speedColumn
+        );
     }
 
     private static Comparator<String> numberComparator() {
