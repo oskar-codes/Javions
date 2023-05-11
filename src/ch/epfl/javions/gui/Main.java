@@ -59,7 +59,6 @@ public class Main extends Application {
         atc.setOnDoubleClick(e -> {
             bmc.centerOn(e.getPosition());
             sap.set(e);
-            bmc.pane().requestFocus();
         });
 
         BorderPane data = new BorderPane();
@@ -84,16 +83,23 @@ public class Main extends Application {
                 String fileName = getParameters().getRaw().get(0);
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
                     byte[] bytes = new byte[RawMessage.LENGTH];
+                    long firstMessageTimeStampNs = 0;
+                    Date start = new Date();
+                    boolean first = true;
                     while (true) {
                         long timeStampNs = s.readLong();
+                        Date now = new Date();
+                        if (first) {
+                            firstMessageTimeStampNs = timeStampNs;
+                            now = start;
+                            first = false;
+                        }
                         int bytesRead = s.readNBytes(bytes, 0, bytes.length);
                         assert bytesRead == RawMessage.LENGTH;
                         RawMessage raw = RawMessage.of(timeStampNs, bytes);
                         if (raw == null) continue;
-                        Date now = new Date();
-                        // TODO: fix this
-                        int timeToWait = (int) (timeStampNs - now.getTime() * 1e6);
-                        if (timeToWait > 0) Thread.sleep(timeToWait / 1000000, timeToWait % 1000000);
+                        int timeToWait = (int) (timeStampNs - firstMessageTimeStampNs - (now.getTime() - start.getTime()) * 1e6);
+                        if (timeToWait > 0) Thread.sleep((long) (timeToWait / 1e6), (int) (timeToWait % 1e6));
                         messageQueue.add(raw);
                     }
                 } catch (IOException | InterruptedException ignored) {}

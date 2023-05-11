@@ -24,7 +24,11 @@ import java.util.function.Consumer;
  */
 public final class AircraftTableController {
     private final TableView<ObservableAircraftState> table;
+    // Determines whether the table should scroll to the selected item or not
+    // (used to prevent scrolling when the user clicks on the table)
+    private boolean shouldScroll = true;
     private Consumer<ObservableAircraftState> consumer;
+    private final static NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
 
     /**
      * Creates a new aircraft table controller.
@@ -53,9 +57,10 @@ public final class AircraftTableController {
         state.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 table.getSelectionModel().select(newValue);
-                if (!newValue.equals(oldValue)) {
+                if (!newValue.equals(oldValue) && shouldScroll) {
                     table.scrollTo(newValue);
                 }
+                shouldScroll = true;
                 table.requestFocus();
             }
         });
@@ -65,6 +70,14 @@ public final class AircraftTableController {
                 ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
                 if (consumer != null && e != null) {
                     consumer.accept(e);
+                }
+                return;
+            }
+            if (event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY) {
+                ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
+                if (e != null) {
+                    shouldScroll = false;
+                    state.set(e);
                 }
             }
         });
@@ -132,8 +145,6 @@ public final class AircraftTableController {
         descriptionColumn.setPrefWidth(70);
 
         /* ### NUMBER COLUMNS ### */
-        NumberFormat formatter = NumberFormat.getInstance(new Locale("fr", "CH"));
-
         // LONGITUDE COLUMN
         TableColumn<ObservableAircraftState, String> longitudeColumn = new TableColumn<>("Longitude (°)");
         longitudeColumn.setCellValueFactory(param -> param.getValue().positionProperty().map(e -> {
@@ -204,11 +215,10 @@ public final class AircraftTableController {
             if (a.isEmpty() || b.isEmpty()) {
                 return a.compareTo(b);
             }
-            NumberFormat formatter = NumberFormat.getInstance();
             try {
                 double aNumber = formatter.parse(a).doubleValue();
                 double bNumber = formatter.parse(b).doubleValue();
-                return (int) (aNumber - bNumber);
+                return Double.compare(aNumber, bNumber);
             } catch (ParseException e) {
                 throw new Error(e);
             }
