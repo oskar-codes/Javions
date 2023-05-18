@@ -41,6 +41,12 @@ public final class AircraftController {
     private final Pane pane;
     private final Map<IcaoAddress, Group> aircraftGroups;
 
+    /**
+     * Constructor of the aircraft controller.
+     * @param mapParameters the map parameters. Cannot be null.
+     * @param states the set of aircraft states. Cannot be null.
+     * @param state the selected aircraft state. Can be null.
+     */
     public AircraftController(MapParameters mapParameters, ObservableSet<ObservableAircraftState> states, ObjectProperty<ObservableAircraftState> state) {
         Objects.requireNonNull(mapParameters);
         Objects.requireNonNull(states);
@@ -54,6 +60,7 @@ public final class AircraftController {
 
         this.aircraftGroups = new HashMap<>();
 
+        // Create aircraft groups for all aircraft states in the set
         states.addListener((SetChangeListener<ObservableAircraftState>) change -> {
             if (change.wasAdded()) {
                 createAircraftGroup(change.getElementAdded());
@@ -65,6 +72,10 @@ public final class AircraftController {
         });
     }
 
+    /**
+     * Creates the JavaFX node of the aircraft representation.
+     * @param s the aircraft state.
+     */
     private void createAircraftGroup(ObservableAircraftState s) {
         Group container = new Group();
         aircraftGroups.put(s.getIcaoAddress(), container);
@@ -79,17 +90,22 @@ public final class AircraftController {
         pane.getChildren().add(container);
     }
 
+    /**
+     * Creates the description box node of the aircraft.
+     * @param s the aircraft state.
+     * @return the description box.
+     */
     private Group createDescriptionBox(ObservableAircraftState s) {
         Group info = new Group();
         Group label = createLabel(s);
         SVGPath path = createIconSVG(s);
         info.getChildren().addAll(label, path);
 
+        // Bind the position of the description box to the position of the aircraft
         info.layoutXProperty().bind(
                 Bindings.createDoubleBinding(() -> WebMercator.x(mapParameters.getZoom(), s.getPosition().longitude()) - mapParameters.getxMin(),
                         mapParameters.zoomProperty(), s.positionProperty(), mapParameters.xMinProperty())
         );
-
         info.layoutYProperty().bind(
                 Bindings.createDoubleBinding(() -> WebMercator.y(mapParameters.getZoom(), s.getPosition().latitude()) - mapParameters.getyMin(),
                         mapParameters.zoomProperty(), s.positionProperty(), mapParameters.yMinProperty())
@@ -97,6 +113,11 @@ public final class AircraftController {
         return info;
     }
 
+    /**
+     * Creates the icon of the aircraft.
+     * @param s the aircraft state.
+     * @return the icon.
+     */
     private SVGPath createIconSVG(ObservableAircraftState s) {
         SVGPath path = new SVGPath();
         path.getStyleClass().add("aircraft");
@@ -124,6 +145,11 @@ public final class AircraftController {
         return path;
     }
 
+    /**
+     * Creates the label node of the aircraft.
+     * @param s the aircraft state.
+     * @return the label.
+     */
     private Group createLabel(ObservableAircraftState s) {
         Group label = new Group();
         label.getStyleClass().add("label");
@@ -172,6 +198,11 @@ public final class AircraftController {
         return label;
     }
 
+    /**
+     * Creates the trajectory node of the aircraft.
+     * @param s the aircraft state.
+     * @return the trajectory.
+     */
     private Group createTrajectory(ObservableAircraftState s) {
         Group trajectory = new Group();
         trajectory.getStyleClass().add("trajectory");
@@ -192,6 +223,11 @@ public final class AircraftController {
         return trajectory;
     }
 
+    /**
+     * Updates the trajectory node of the aircraft.
+     * @param s the aircraft state.
+     * @param trajectory the trajectory node.
+     */
     private void updateTrajectory(ObservableAircraftState s, Group trajectory) {
         trajectory.getChildren().clear();
         List<ObservableAircraftState.AirbornePos> trajectoryPoints = s.getTrajectory();
@@ -223,6 +259,10 @@ public final class AircraftController {
         }
     }
 
+    /**
+     * Getter for the pane.
+     * @return the pane.
+     */
     public Pane pane() {
         return pane;
     }

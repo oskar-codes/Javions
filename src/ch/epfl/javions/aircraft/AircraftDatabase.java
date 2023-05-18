@@ -48,14 +48,15 @@ public class AircraftDatabase {
                 current = line;
             }
             String[] data = current.split(SEPARATOR, -1);
-            if (current.startsWith(address.string()))
+            if (current.startsWith(address.string())) {
                 return new AircraftData(
-                    new AircraftRegistration(data[1]),
-                    new AircraftTypeDesignator(data[2]),
-                    data[3],
-                    new AircraftDescription(data[4]),
-                    WakeTurbulenceCategory.of(data[5])
+                        new AircraftRegistration(data[1]),
+                        new AircraftTypeDesignator(data[2]),
+                        data[3],
+                        new AircraftDescription(data[4]),
+                        WakeTurbulenceCategory.of(data[5])
                 );
+            }
         }
         return null;
     }

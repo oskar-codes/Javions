@@ -4,8 +4,15 @@ import javafx.scene.paint.Color;
 
 import static ch.epfl.javions.Preconditions.checkArgument;
 
+/**
+ * Class representing a color ramp.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public final class ColorRamp {
     private final Color[] colors;
+    // TODO: check this list of color ramps: https://bids.github.io/colormap/
+    // Plasma color ramp from https://bids.github.io/colormap/
     public static final ColorRamp PLASMA = new ColorRamp(
             Color.valueOf("0x0d0887ff"), Color.valueOf("0x220690ff"),
             Color.valueOf("0x320597ff"), Color.valueOf("0x40049dff"),
@@ -24,11 +31,20 @@ public final class ColorRamp {
             Color.valueOf("0xfccf25ff"), Color.valueOf("0xf9dd24ff"),
             Color.valueOf("0xf5eb27ff"), Color.valueOf("0xf0f921ff"));
 
+    /**
+     * Constructor of a color ramp.
+     * @param colors the colors of the color ramp.
+     */
     public ColorRamp(Color ... colors) {
         checkArgument(colors.length > 1);
         this.colors = colors;
     }
 
+    /**
+     * Returns the color at the given position in the color ramp.
+     * @param t the position in the color ramp.
+     * @return the color at the given position in the color ramp.
+     */
     public Color at(double t) {
         if (t <= 0) return colors[0];
         if (t >= 1) return colors[colors.length - 1];

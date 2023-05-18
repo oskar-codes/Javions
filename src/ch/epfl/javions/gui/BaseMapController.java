@@ -18,7 +18,6 @@ import static javafx.scene.Cursor.DEFAULT;
 
 /**
  * Controller for the base map.
- *
  * @author Eddy Rashed (360667)
  * @author Oskar Zanota (361595)
  */
@@ -89,6 +88,10 @@ public final class BaseMapController {
         mapParameters.yMinProperty().addListener((p, o, n) -> redrawOnNextPulse());
     }
 
+    /**
+     * Returns the pane containing the map.
+     * @return the pane containing the map
+     */
     public Pane pane() {
         return pane;
     }

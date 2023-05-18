@@ -23,19 +23,40 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+/**
+ * Main class of the Javions application.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public class Main extends Application {
     private final ConcurrentLinkedQueue<RawMessage> messageQueue = new ConcurrentLinkedQueue<>();
+
+    /**
+     * Main method of the Javions application.
+     * @param args the command line arguments. The first argument is the path to a file containing messages.
+     *             If omitted, messages are read from stdin.
+     */
     public static void main(String[] args) {
         launch(args);
     }
+
+    /**
+     * Start method of the JavaFX application.
+     * @param stage the primary stage for this application, onto which
+     * the application scene can be set.
+     * @throws Exception if an error occurs during the execution of the application.
+     */
     @Override
     public void start(Stage stage) throws Exception {
 
+        // Retreive the aircraft database
         URL u = getClass().getResource("/aircraft.zip");
         assert u != null;
         Path p = Path.of(u.toURI());
         AircraftDatabase db = new AircraftDatabase(p.toString());
 
+        // Set up the map
         Path tileCache = Path.of("tile-cache");
         TileManager tm =
                 new TileManager(tileCache, "tile.openstreetmap.org");
@@ -43,10 +64,9 @@ public class Main extends Application {
                 new MapParameters(8, 33530, 23070);
         BaseMapController bmc = new BaseMapController(tm, mp);
 
-
-        AircraftStateManager asm = new AircraftStateManager(db);
         ObjectProperty<ObservableAircraftState> sap =
                 new SimpleObjectProperty<>();
+        AircraftStateManager asm = new AircraftStateManager(db);
         AircraftController ac =
                 new AircraftController(mp, asm.states(), sap);
         StackPane map = new StackPane(bmc.pane(), ac.pane());
@@ -68,19 +88,21 @@ public class Main extends Application {
         SplitPane root = new SplitPane(map, data);
         root.setOrientation(Orientation.VERTICAL);
 
+        // Set up the stage
         stage.setMinWidth(800);
         stage.setMinHeight(600);
-//        stage.setFullScreenExitHint("");
-//        stage.setFullScreen(true);
         stage.setTitle("Javions");
         stage.setScene(new Scene(root));
         stage.show();
 
         boolean isFile = !getParameters().getRaw().isEmpty();
 
+        // Decoder thread for reading messages from a file or stdin (radio) concurrently
         Thread decoder = new Thread(() -> {
+            // Read from file
             if (isFile) {
                 String fileName = getParameters().getRaw().get(0);
+                System.out.println(fileName);
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
                     byte[] bytes = new byte[RawMessage.LENGTH];
                     long firstMessageTimeStampNs = 0;
@@ -104,6 +126,7 @@ public class Main extends Application {
                     }
                 } catch (IOException | InterruptedException ignored) {}
             } else {
+                // Read from stdin
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(System.in))) {
                     AdsbDemodulator demodulator = new AdsbDemodulator(s);
                     RawMessage r;
@@ -113,18 +136,25 @@ public class Main extends Application {
                 } catch (IOException ignored) {}
             }
         });
+        decoder.setDaemon(true);
         decoder.start();
 
+        // Animation timer for updating the aircraft states
         new AnimationTimer() {
+            private double previous = Double.NEGATIVE_INFINITY;
             @Override
-            public void handle(long now) {
+            public void handle(long nowNs) {
                 try {
-                    for (int i = 0; i < 10; i += 1) {
-                        if (messageQueue.isEmpty()) return;
-                        Message m = MessageParser.parse(messageQueue.poll());
-                        if (m == null) continue;
-                        slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
-                        asm.updateWithMessage(m);
+                    if (messageQueue.isEmpty()) return;
+                    Message m = MessageParser.parse(messageQueue.poll());
+                    if (m == null) return;
+                    slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
+                    asm.updateWithMessage(m);
+
+                    // Purge the aircraft states every second
+                    if (nowNs / 1e9 - previous / 1e9 >= 1) {
+                        previous = nowNs;
+                        asm.purge(m);
                     }
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
