@@ -41,11 +41,17 @@ public final class AircraftStateManager {
                 states.add(obj.stateSetter());
             }
         }
-        purge(message);
     }
 
     public void purge(Message message) {
         states.removeIf(state -> state.getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
+        // TODO: check if this is correct
         table.entrySet().removeIf(entry -> entry.getValue().stateSetter().getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
+        table.forEach((k, v) -> {
+            double diff = v.stateSetter().getLastMessageTimeStampNs() - message.timeStampNs() / 1e9;
+            if (diff < -5) {
+                System.out.println(diff);
+            }
+        });
     }
 }

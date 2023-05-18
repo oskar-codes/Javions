@@ -191,10 +191,29 @@ public final class AircraftTableController {
         speedColumn.setComparator(numberComparator());
         speedColumn.setPrefWidth(85);
 
+//        DoubleProperty time = new SimpleDoubleProperty((new Date().getTime()) * 1e6);
+//        Thread updateTime = new Thread(() -> {
+//            while (true) {
+//                time.set((new Date().getTime()) * 1e6);
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
+//        updateTime.setDaemon(true);
+//        updateTime.start();
+//
+//        // Last message timestamp column
+//        TableColumn<ObservableAircraftState, String> lastMessageTimeStampColumn = new TableColumn<>("Temps depuis le dernier message");
+//        lastMessageTimeStampColumn.setCellValueFactory(param -> param.getValue().lastMessageTimeStampNsProperty().subtract(time).negate().divide(1e9).asString());
+
         longitudeColumn.getStyleClass().add("numeric");
         latitudeColumn.getStyleClass().add("numeric");
         altitudeColumn.getStyleClass().add("numeric");
         speedColumn.getStyleClass().add("numeric");
+//        lastMessageTimeStampColumn.getStyleClass().add("numeric");
 
         table.getColumns().addAll(
                 icaoAddressColumn,
