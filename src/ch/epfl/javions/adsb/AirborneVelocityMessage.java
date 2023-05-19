@@ -54,8 +54,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
             double speed = Math.hypot(vew, vns) * (subtype == 2 ? 4 : 1);
 
             // Converts the result to m/s
-            // Todo use Units to convert
-            double convertedSpeed = Units.convert(speed, Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 10d / 36d;
+            double convertedSpeed = Units.convertFrom(speed, Units.Speed.KNOT);
 
             if (dns) vns = -vns;
             if (dew) vew = -vew;
@@ -77,7 +76,7 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
                 double speed = as * (subtype == 4 ? 4 : 1);
 
                 // Converts the result to m/s
-                double convertedSpeed = Units.convert(speed, Units.Speed.KNOT, Units.Speed.KILOMETER_PER_HOUR) * 10d / 36d;
+                double convertedSpeed = Units.convertFrom(speed, Units.Speed.KNOT);
 
                 return new AirborneVelocityMessage(rawMessage.timeStampNs(), rawMessage.icaoAddress(), convertedSpeed, result);
             }

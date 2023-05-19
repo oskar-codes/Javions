@@ -36,6 +36,8 @@ import static javafx.scene.paint.CycleMethod.NO_CYCLE;
  * @author Eddy Rashed (360667)
  */
 public final class AircraftController {
+    // Labels only appear when zoomed in past this threshold
+    private static final int LABEL_ZOOM_THRESHOLD = 11;
     private final MapParameters mapParameters;
     private final ObjectProperty<ObservableAircraftState> state;
     private final Pane pane;
@@ -72,8 +74,23 @@ public final class AircraftController {
         });
     }
 
+    //      #######       NODE ARCHITECTURE       #######
+    //
+    //                  Group#OACI
+    //                    /       \
+    //                   /         \
+    //                  /           \
+    //             Trajectory    DescriptionBox
+    //                 |              |      \
+    //            [Line, ...]         |       \
+    //                              Label    SvgPath icon
+    //                             /     \
+    //                       Rectangle  Text
+    //
+
     /**
      * Creates the JavaFX node of the aircraft representation.
+     * This method creates the description box and trajectory.
      * @param s the aircraft state.
      */
     private void createAircraftGroup(ObservableAircraftState s) {
@@ -96,21 +113,23 @@ public final class AircraftController {
      * @return the description box.
      */
     private Group createDescriptionBox(ObservableAircraftState s) {
-        Group info = new Group();
+        Group descriptionBox = new Group();
         Group label = createLabel(s);
         SVGPath path = createIconSVG(s);
-        info.getChildren().addAll(label, path);
+        descriptionBox.getChildren().addAll(label, path);
 
         // Bind the position of the description box to the position of the aircraft
-        info.layoutXProperty().bind(
-                Bindings.createDoubleBinding(() -> WebMercator.x(mapParameters.getZoom(), s.getPosition().longitude()) - mapParameters.getxMin(),
-                        mapParameters.zoomProperty(), s.positionProperty(), mapParameters.xMinProperty())
+        descriptionBox.layoutXProperty().bind(
+                Bindings.createDoubleBinding(() ->
+                    WebMercator.x(mapParameters.getZoom(), s.getPosition().longitude()) - mapParameters.getxMin(),
+                                  mapParameters.zoomProperty(), s.positionProperty(), mapParameters.xMinProperty())
         );
-        info.layoutYProperty().bind(
-                Bindings.createDoubleBinding(() -> WebMercator.y(mapParameters.getZoom(), s.getPosition().latitude()) - mapParameters.getyMin(),
-                        mapParameters.zoomProperty(), s.positionProperty(), mapParameters.yMinProperty())
+        descriptionBox.layoutYProperty().bind(
+                Bindings.createDoubleBinding(() ->
+                    WebMercator.y(mapParameters.getZoom(), s.getPosition().latitude()) - mapParameters.getyMin(),
+                                  mapParameters.zoomProperty(), s.positionProperty(), mapParameters.yMinProperty())
         );
-        return info;
+        return descriptionBox;
     }
 
     /**
@@ -123,7 +142,7 @@ public final class AircraftController {
         path.getStyleClass().add("aircraft");
         path.fillProperty().bind(
                 Bindings.createObjectBinding(() -> {
-                    double t = Math.pow(s.getAltitude() / 12000, 1d/3d);
+                    double t = altitudeRamp(s.getAltitude());
                     return ColorRamp.PLASMA.at(t);
                 }, s.altitudeProperty())
         );
@@ -155,7 +174,7 @@ public final class AircraftController {
         label.getStyleClass().add("label");
         label.visibleProperty().bind(
                 Bindings.createBooleanBinding(() ->
-                        mapParameters.getZoom() >= 11 ||
+                        mapParameters.getZoom() >= LABEL_ZOOM_THRESHOLD ||
                         state.get() != null &&
                         state.get().getIcaoAddress().equals(s.getIcaoAddress()),
                 mapParameters.zoomProperty(), state)
@@ -164,10 +183,12 @@ public final class AircraftController {
         Rectangle rect = new Rectangle();
         Text txt = new Text();
 
+        final int rectPadding = 4;
+
         rect.widthProperty().bind(
-                txt.layoutBoundsProperty().map(b -> b.getWidth() + 4));
+                txt.layoutBoundsProperty().map(b -> b.getWidth() + rectPadding));
         rect.heightProperty().bind(
-                txt.layoutBoundsProperty().map(b -> b.getHeight() + 4));
+                txt.layoutBoundsProperty().map(b -> b.getHeight() + rectPadding));
         txt.textProperty().bind(
                 Bindings.createStringBinding(() -> {
                     String identifier = s.getAircraftData() != null ?
@@ -179,8 +200,9 @@ public final class AircraftController {
                     if (Double.isNaN(s.getVelocity())) {
                         speed = "?";
                     } else {
+                        // Convert m/s to km/h
                         speed = String.valueOf(
-                                (int) s.getVelocity() * 3600 / 1000
+                                (int) Units.convertTo(s.getVelocity(), Units.Speed.KILOMETER_PER_HOUR)
                         );
                     }
                     String altitude;
@@ -215,7 +237,8 @@ public final class AircraftController {
                 }, state)
         );
 
-        s.trajectoryProperty().addListener(((ListChangeListener<ObservableAircraftState.AirbornePos>) change -> updateTrajectory(s, trajectory)));
+        s.trajectoryProperty().addListener(((ListChangeListener<ObservableAircraftState.AirbornePos>) change ->
+                updateTrajectory(s, trajectory)));
         mapParameters.zoomProperty().addListener((p, o, n) -> updateTrajectory(s, trajectory));
 
         trajectory.layoutXProperty().bind(mapParameters.xMinProperty().negate());
@@ -225,6 +248,7 @@ public final class AircraftController {
 
     /**
      * Updates the trajectory node of the aircraft.
+     * Clears the trajectory before adding the new trajectory points.
      * @param s the aircraft state.
      * @param trajectory the trajectory node.
      */
@@ -246,10 +270,10 @@ public final class AircraftController {
             );
 
             if (p1.altitude() == p2.altitude()) {
-                path.setStroke(ColorRamp.PLASMA.at(Math.pow(p1.altitude() / 12000, 1d/3d)));
+                path.setStroke(ColorRamp.PLASMA.at(altitudeRamp(p1.altitude())));
             } else {
-                Color c1 = ColorRamp.PLASMA.at(Math.pow(p1.altitude() / 12000, 1d/3d));
-                Color c2 = ColorRamp.PLASMA.at(Math.pow(p2.altitude() / 12000, 1d/3d));
+                Color c1 = ColorRamp.PLASMA.at(altitudeRamp(p1.altitude()));
+                Color c2 = ColorRamp.PLASMA.at(altitudeRamp(p2.altitude()));
                 Stop s1 = new Stop(0, c1);
                 Stop s2 = new Stop(1, c2);
                 path.setStroke(new LinearGradient(0, 0, 1, 0, true, NO_CYCLE, s1, s2));
@@ -257,6 +281,17 @@ public final class AircraftController {
 
             trajectory.getChildren().add(path);
         }
+    }
+
+    /**
+     * Computes the position in the ramp according to the altitude.
+     * The formula is (altitude / 12000) ^ (1/3).
+     * 12000 is the approximate maximum altitude of the aircraft considered in this project.
+     * @param altitude the altitude.
+     * @return the altitude ramp.
+     */
+    private static double altitudeRamp(double altitude) {
+        return Math.pow(altitude / 12000, 1d / 3d);
     }
 
     /**
