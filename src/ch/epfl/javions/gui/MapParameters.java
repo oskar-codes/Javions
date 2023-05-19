@@ -14,6 +14,9 @@ public final class MapParameters {
     private final DoubleProperty xMin = new SimpleDoubleProperty();
     private final DoubleProperty yMin = new SimpleDoubleProperty();
 
+    public final static int MIN_ZOOM = 3;
+    public final static int MAX_ZOOM = 19;
+
     /**
      * Constructs a new MapParameters object with the given zoom level and the given xMin and yMin coordinates
      * @param zoom - the zoom level
@@ -22,8 +25,8 @@ public final class MapParameters {
      * @throws IllegalArgumentException if the zoom level is not between 6 and 19
      */
     public MapParameters(int zoom, double xMin, double yMin) {
-        if (zoom < 6 || zoom > 19) {
-            throw new IllegalArgumentException("Zoom level must be between 6 and 19");
+        if (!(MIN_ZOOM <= zoom && zoom <= MAX_ZOOM)) {
+            throw new IllegalArgumentException("Zoom level must be between " + MIN_ZOOM + " and " + MAX_ZOOM);
         }
         this.zoom.set(zoom);
         this.xMin.set(xMin);
@@ -89,12 +92,12 @@ public final class MapParameters {
     }
 
     /**
-     * Changes the zoom level of the map. The zoom level is clamped between 6 and 19.
+     * Changes the zoom level of the map. The zoom level is clamped between the minimum and maximum zoom levels.
      * @param zoom - the zoom delta
      */
     public void changeZoomLevel(int zoom) {
         int previousZoom = getZoom();
-        this.zoom.set(Math2.clamp(6, getZoom() + zoom, 19));
+        this.zoom.set(Math2.clamp(MIN_ZOOM, getZoom() + zoom, MAX_ZOOM));
         if (previousZoom == getZoom()) return;
 
         this.xMin.set(Math.scalb(getxMin(), zoom));

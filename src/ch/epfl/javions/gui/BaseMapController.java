@@ -133,8 +133,12 @@ public final class BaseMapController {
         int startY = yMin >>> 8;
         GraphicsContext ctx = this.canvas.getGraphicsContext2D();
 
-        for (int x = -1; x < canvas.getWidth() / 256 + 1; x++) {
-            for (int y = -1; y < canvas.getHeight() / 256 + 1; y++) {
+        // TODO: fix drawing on the border of the map
+
+        for (int x = 0; x < canvas.getWidth() / 256 + 1; x++) {
+            for (int y = 0; y < canvas.getHeight() / 256 + 1; y++) {
+
+                if (!TileManager.TileId.isValid(mapParameters.getZoom(), startX + x, startY + y)) continue;
 
                 // Gets the image from the tile-manager
                 Image image = tileManager.imageForTileAt(new TileManager.TileId(

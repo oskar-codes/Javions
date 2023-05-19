@@ -33,8 +33,8 @@ public final class TileManager {
 
     /**
      * Constructs a {@code TileManager} with the given disk path and server domain.
-     * @param diskPath - the path to the cache on the disk
-     * @param serverDomain - the domain of the server to download the tiles from
+     * @param diskPath the path to the cache on the disk
+     * @param serverDomain the domain of the server to download the tiles from
      */
     public TileManager(Path diskPath, String serverDomain) {
         this.diskPath = diskPath;
@@ -43,23 +43,36 @@ public final class TileManager {
 
     /**
      * A record representing the id of a tile.
-     * @param zoom - the zoom level
-     * @param x - the x coordinate
-     * @param y - the y coordinate
+     * @param zoom the zoom level
+     * @param x the x coordinate
+     * @param y the y coordinate
      */
     record TileId(int zoom, int x, int y) {
+        /**
+         * Checks if the tile id is valid.
+         * @param zoom the zoom level. Must be between 6 and 19 (inclusive).
+         * @param x the x coordinate. Must be between 0 and 4^zoom - 1 (inclusive).
+         * @param y the y coordinate. Must be between 0 and 4^zoom - 1 (inclusive).
+         * @return true if the tile id is valid, false otherwise
+         */
         public static boolean isValid(int zoom, int x, int y) {
-            return zoom >= 6 && zoom <= 19 && x >= 0 && x < Math.pow(4, zoom) && y >= 0 && y < Math.pow(4, zoom);
+            // TODO: check which condition clause is better
+            return
+                    MapParameters.MIN_ZOOM <= zoom && zoom <= MapParameters.MAX_ZOOM &&
+                                            x >= 0 && x < 1L << (zoom * 2) &&
+                                            y >= 0 && y < Math.pow(4, zoom);
+//                                            x >= 0 && x < Math.pow(4, zoom) &&
         }
     }
 
     /**
      * Returns the image for the tile at the given tile id. If the image is not in the cache, it is downloaded from the server.
-     * @param tileId - the tile id
+     * @param tileId the tile id
      * @return the image for the tile at the given tile id
      */
     public Image imageForTileAt(TileId tileId) {
         if (!TileId.isValid(tileId.zoom, tileId.x, tileId.y)) {
+            System.out.println(tileId.x);
             throw new IllegalArgumentException("Invalid tile id");
         }
         // Retrieve the image from the cache if it is present
@@ -67,7 +80,7 @@ public final class TileManager {
             return cache.get(tileId);
         }
 
-        // Retreive the image from the disk if it is present
+        // Retrieve the image from the disk if it is present
         Path path = Path.of(diskPath.toString(), String.valueOf(tileId.zoom()), String.valueOf(tileId.x()));
         Path fullPath = Path.of(path.toString(), tileId.y() + ".png");
         if (Files.exists(fullPath)) {
