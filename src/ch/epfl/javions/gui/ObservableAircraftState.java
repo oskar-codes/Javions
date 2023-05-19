@@ -53,7 +53,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     }
 
     /**
-     * Getter for the ICACO address.
+     * Getter for the ICAO address.
      * @return the ICAO address
      */
     public IcaoAddress getIcaoAddress() {
@@ -69,24 +69,24 @@ public final class ObservableAircraftState implements AircraftStateSetter {
     }
 
     /**
-     * Getter for the position property. The position property is read-only.
-     * @return the position property
+     * Getter for the last message time stamp (in nanosecond) property. The position property is read-only.
+     * @return the last message time stamp (in nanosecond) property
      */
     public ReadOnlyLongProperty lastMessageTimeStampNsProperty() {
         return lastMessageTimeStampNs;
     }
 
     /**
-     * Getter for the last message time stamp.
-     * @return the last message time stamp
+     * Getter for the last message time stamp (in nanosecond).
+     * @return the last message time stamp (in nanosecond)
      */
     public long getLastMessageTimeStampNs() {
         return lastMessageTimeStampNs.get();
     }
 
     /**
-     * Setter for the last message time stamp.
-     * @param lastMessageTimeStampNs - the last message time stamp in nanoseconds
+     * Setter for the last message time stamp (in nanosecond).
+     * @param lastMessageTimeStampNs - the last message time stamp (in nanoseconds)
      */
     public void setLastMessageTimeStampNs(long lastMessageTimeStampNs) {
         this.lastMessageTimeStampNs.set(lastMessageTimeStampNs);
@@ -150,7 +150,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
 
     /**
      * Getter for the position.
-     * @return the position
+     * @return the aircraft's position
      */
     public GeoPos getPosition() {
         return position.get();
@@ -162,13 +162,15 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      */
     public void setPosition(GeoPos position) {
         boolean different = !position.equals(getPosition());
-        this.position.set(position);
-        if (different) updateTrajectory();
+        if (different) {
+            this.position.set(position);
+            updateTrajectory();
+        }
     }
 
     /**
-     * Getter for the trajectory. The trajectory is an unmodifiable observable list.
-     * @return the trajectory
+     * Getter for the trajectory property. The trajectory property is an unmodifiable observable list.
+     * @return the trajectory property
      */
     public ObservableList<AirbornePos> trajectoryProperty() {
         return unmodifiableTrajectory;
@@ -204,8 +206,10 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      */
     public void setAltitude(double altitude) {
         boolean different = altitude != getAltitude();
-        this.altitude.set(altitude);
-        if (different) updateTrajectory();
+        if (different) {
+            this.altitude.set(altitude);
+            updateTrajectory();
+        }
     }
 
     /**
