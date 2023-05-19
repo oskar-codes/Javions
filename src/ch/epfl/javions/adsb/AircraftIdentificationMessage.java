@@ -22,6 +22,14 @@ public record AircraftIdentificationMessage(long timeStampNs,
                                             CallSign callSign) implements Message {
     private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ".toCharArray();
     private static final int PAYLOAD_SIZE = 48;
+
+    /**
+     * Constructs an AircraftIdentificationMessage with the given parameters.
+     * @param timeStampNs time of reception of the message in nanoseconds. Must be positive.
+     * @param icaoAddress ICAO address of the aircraft. Must not be null.
+     * @param category category of the aircraft.
+     * @param callSign call sign of the aircraft. Must not be null.
+     */
     public AircraftIdentificationMessage {
         Objects.requireNonNull(icaoAddress);
         Objects.requireNonNull(callSign);
@@ -30,7 +38,6 @@ public record AircraftIdentificationMessage(long timeStampNs,
 
     /**
      * Creates an AircraftIdentificationMessage from a RawMessage.
-     *
      * @param rawMessage the RawMessage to be converted
      * @return the AircraftIdentificationMessage
      */

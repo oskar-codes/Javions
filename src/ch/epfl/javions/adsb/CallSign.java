@@ -14,6 +14,10 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 public record CallSign(String string) {
     static final Pattern PATTERN = Pattern.compile("[A-Z0-9 ]{0,8}");
 
+    /**
+     * Constructs a call sign with the given string.
+     * @param string the string. Must be a valid call sign or empty.
+     */
     public CallSign {
         checkArgument(PATTERN.matcher(string).matches() || string.isEmpty());
     }

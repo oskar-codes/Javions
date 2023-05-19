@@ -45,6 +45,7 @@ public final class AircraftTableController {
 
         createColumns();
 
+        // Update the table when the set of aircraft states changes
         states.addListener((SetChangeListener<ObservableAircraftState>) change -> {
             if (change.wasAdded()) {
                 table.getItems().add(change.getElementAdded());
@@ -54,6 +55,7 @@ public final class AircraftTableController {
             }
         });
 
+        // Update the table when the selected aircraft state changes
         state.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 table.getSelectionModel().select(newValue);
@@ -65,6 +67,7 @@ public final class AircraftTableController {
             }
         });
 
+        // Handle table clicks
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
                 ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
@@ -83,6 +86,10 @@ public final class AircraftTableController {
         });
     }
 
+    /**
+     * Sets the consumer for double clicks.
+     * @param consumer the consumer
+     */
     public void setOnDoubleClick(Consumer<ObservableAircraftState> consumer) {
         this.consumer = consumer;
     }
@@ -210,6 +217,10 @@ public final class AircraftTableController {
         );
     }
 
+    /**
+     * The comparator for numbers columns.
+     * @return the comparator
+     */
     private static Comparator<String> numberComparator() {
         return (a, b) -> {
             if (a.isEmpty() || b.isEmpty()) {
@@ -225,6 +236,10 @@ public final class AircraftTableController {
         };
     }
 
+    /**
+     * Returns the JavaFX pane of the table.
+     * @return the pane
+     */
     public TableView<ObservableAircraftState> pane() {
         return table;
     }

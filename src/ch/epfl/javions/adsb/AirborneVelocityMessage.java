@@ -8,7 +8,6 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * A record that represents an airborne velocity message.
- *
  * @param timeStampNs    the time at which the message was received.
  * @param icaoAddress    the ICAO address of the aircraft.
  * @param speed          the speed of the aircraft.
@@ -24,7 +23,6 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static final int VNS_SIZE = 10;
     private static final int VEW_POSITION = 11;
     private static final int VEW_SIZE = 10;
-
     private static final int AS_POSITION = 0;
     private static final int AS_SIZE = 10;
     private static final int HDG_POSITION = 11;

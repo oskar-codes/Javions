@@ -12,6 +12,11 @@ import java.util.Map;
 import static javafx.collections.FXCollections.observableSet;
 import static javafx.collections.FXCollections.unmodifiableObservableSet;
 
+/**
+ * A class that manages the aircraft states.
+ * @author Oskar Zanota (361595)
+ * @author Eddy Rashed (360667)
+ */
 public final class AircraftStateManager {
     private final AircraftDatabase database;
     private final Map<IcaoAddress, AircraftStateAccumulator<ObservableAircraftState>> table = new HashMap<>();
@@ -21,11 +26,19 @@ public final class AircraftStateManager {
         this.database = database;
     }
 
-    // The states() method that returns the state attribute still Observable but ReadOnly
+    /**
+     * Returns the set of aircraft states. The returned set is unmodifiable.
+     * @return the set of aircraft states
+     */
     public ObservableSet<ObservableAircraftState> states() {
         return unmodifiableStates;
     }
 
+    /**
+     * Updates the aircraft state with the given message.
+     * @param message the message
+     * @throws IOException if an I/O error occurs
+     */
     public void updateWithMessage(Message message) throws IOException {
         IcaoAddress address = message.icaoAddress();
         if (table.containsKey(address)) {
@@ -43,15 +56,12 @@ public final class AircraftStateManager {
         }
     }
 
+    /**
+     * Purges the aircraft states that are older than 60 seconds.
+     * @param message the message.
+     */
     public void purge(Message message) {
         states.removeIf(state -> state.getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
-        // TODO: check if this is correct
         table.entrySet().removeIf(entry -> entry.getValue().stateSetter().getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
-        table.forEach((k, v) -> {
-            double diff = v.stateSetter().getLastMessageTimeStampNs() - message.timeStampNs() / 1e9;
-            if (diff < -5) {
-                System.out.println(diff);
-            }
-        });
     }
 }

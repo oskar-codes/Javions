@@ -10,7 +10,7 @@ import static ch.epfl.javions.Bits.extractUInt;
 import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
- * A class that represents an ADS-B airborne position message.
+ * A record that represents an ADS-B airborne position message.
  *
  * @param timeStampNs time of reception of the message
  * @param icaoAddress ICAO address of the aircraft
@@ -27,6 +27,15 @@ public record AirbornePositionMessage(long timeStampNs,
                                       int parity,
                                       double x,
                                       double y) implements Message {
+    /**
+     * Constructs an airborne position message with the given parameters.
+     * @param timeStampNs time of reception of the message in nanoseconds. Must be positive.
+     * @param icaoAddress ICAO address of the aircraft. Must not be null.
+     * @param altitude altitude of the aircraft.
+     * @param parity parity of the message (0 or 1).
+     * @param x longitude of the aircraft (between 0 and 1).
+     * @param y latitude of the aircraft (between 0 and 1).
+     */
     public AirbornePositionMessage {
         Objects.requireNonNull(icaoAddress);
         checkArgument(timeStampNs >= 0
@@ -37,7 +46,6 @@ public record AirbornePositionMessage(long timeStampNs,
 
     /**
      * Returns 1 if the bit is set, 0 otherwise.
-     *
      * @param data the data
      * @param bit the bit
      * @return 1 if the bit is set, 0 otherwise
@@ -48,7 +56,6 @@ public record AirbornePositionMessage(long timeStampNs,
 
     /**
      * Returns the value corresponding to the given gray code.
-     *
      * @param v the gray code
      * @return the value corresponding to the given gray code
      */
@@ -63,7 +70,6 @@ public record AirbornePositionMessage(long timeStampNs,
 
     /**
      * Creates an airborne position message from the given raw message.
-     *
      * @param message the raw message
      * @return an airborne position message from the given raw message
      */

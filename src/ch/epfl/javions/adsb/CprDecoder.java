@@ -7,7 +7,6 @@ import static ch.epfl.javions.Preconditions.checkArgument;
 
 /**
  * A class that decodes the CPR encoded position of an aircraft.
- *
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
@@ -20,7 +19,6 @@ public final class CprDecoder {
 
     /**
      * Decodes the position of an aircraft.
-     *
      * @param x0         the longitude of the first position.
      * @param y0         the latitude of the first position.
      * @param x1         the longitude of the second position.
