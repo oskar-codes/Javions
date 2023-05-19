@@ -104,8 +104,8 @@ public final class BaseMapController {
         double x = WebMercator.x(mapParameters.getZoom(), pos.longitude());
         double y = WebMercator.y(mapParameters.getZoom(), pos.latitude());
 
-        double deltaX = x - mapParameters.getxMin() - canvas.getWidth() / 2;
-        double deltaY = y - mapParameters.getyMin() - canvas.getHeight() / 2;
+        double deltaX = x - mapParameters.getxMin() - canvas.getWidth() / 2d;
+        double deltaY = y - mapParameters.getyMin() - canvas.getHeight() / 2d;
 
         mapParameters.scroll(deltaX, deltaY);
     }
@@ -136,7 +136,7 @@ public final class BaseMapController {
         for (int x = -1; x < canvas.getWidth() / 256 + 1; x++) {
             for (int y = -1; y < canvas.getHeight() / 256 + 1; y++) {
 
-                // Gets the image from the tilemanager
+                // Gets the image from the tile-manager
                 Image image = tileManager.imageForTileAt(new TileManager.TileId(
                         mapParameters.getZoom(),
                         startX + x,

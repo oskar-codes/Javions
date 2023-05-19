@@ -33,7 +33,7 @@ public final class ColorRamp {
 
     /**
      * Constructor of a color ramp.
-     * @param colors the colors of the color ramp.
+     * @param colors the colors of the color ramp. Must be at least 2 colors.
      */
     public ColorRamp(Color ... colors) {
         checkArgument(colors.length > 1);

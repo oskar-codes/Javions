@@ -50,7 +50,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        // Retreive the aircraft database
+        // Retrieve the aircraft database
         URL u = getClass().getResource("/aircraft.zip");
         assert u != null;
         Path p = Path.of(u.toURI());
@@ -102,7 +102,6 @@ public class Main extends Application {
             // Read from file
             if (isFile) {
                 String fileName = getParameters().getRaw().get(0);
-                System.out.println(fileName);
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
                     byte[] bytes = new byte[RawMessage.LENGTH];
                     long firstMessageTimeStampNs = 0;

@@ -32,10 +32,11 @@ public final class AircraftTableController {
 
     /**
      * Creates a new aircraft table controller.
-     * @param states the set of aircraft states
+     * @param states the set of aircraft states. Cannot be null.
      * @param state the selected aircraft state
      */
-    public AircraftTableController(ObservableSet<ObservableAircraftState> states, ObjectProperty<ObservableAircraftState> state) {
+    public AircraftTableController(ObservableSet<ObservableAircraftState> states,
+                                   ObjectProperty<ObservableAircraftState> state) {
         Objects.requireNonNull(states);
 
         this.table = new TableView<>();
@@ -69,18 +70,21 @@ public final class AircraftTableController {
 
         // Handle table clicks
         table.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-                ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
-                if (consumer != null && e != null) {
-                    consumer.accept(e);
-                }
-                return;
-            }
-            if (event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY) {
-                ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
-                if (e != null) {
-                    shouldScroll = false;
-                    state.set(e);
+            if (event.getButton() == MouseButton.PRIMARY) {
+                switch (event.getClickCount()) {
+                    case 1 -> {
+                        ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
+                        if (e != null) {
+                            shouldScroll = false;
+                            state.set(e);
+                        }
+                    }
+                    case 2 -> {
+                        ObservableAircraftState e = table.getSelectionModel().getSelectedItem();
+                        if (consumer != null && e != null) {
+                            consumer.accept(e);
+                        }
+                    }
                 }
             }
         });
@@ -100,10 +104,10 @@ public final class AircraftTableController {
     private void createColumns() {
 
         /* ### TEXT COLUMNS ### */
-
         // ICAO ADDRESS COLUMN
         TableColumn<ObservableAircraftState, String> icaoAddressColumn = new TableColumn<>("OACI");
-        icaoAddressColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getIcaoAddress().string()));
+        icaoAddressColumn.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getIcaoAddress().string()));
         icaoAddressColumn.setPrefWidth(60);
 
         // CALL SIGN COLUMN
@@ -114,10 +118,15 @@ public final class AircraftTableController {
         // REGISTRATION COLUMN
         TableColumn<ObservableAircraftState, String> registrationColumn = new TableColumn<>("Immatriculation");
         registrationColumn.setCellValueFactory(param -> {
-            if (param.getValue().getAircraftData() == null) {
-                return new ReadOnlyObjectWrapper<>("");
-            }
-            return new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().registration().string());
+
+            return param.getValue().getAircraftData() == null ?
+                    new ReadOnlyObjectWrapper<>("") :
+                    new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().registration().string());
+
+//            if (param.getValue().getAircraftData() == null) {
+//                return new ReadOnlyObjectWrapper<>("");
+//            }
+//            return new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().registration().string());
         });
         registrationColumn.setPrefWidth(90);
 
@@ -151,7 +160,10 @@ public final class AircraftTableController {
         });
         descriptionColumn.setPrefWidth(70);
 
+        // TODO: constants, ternary, throws
+
         /* ### NUMBER COLUMNS ### */
+        final int NUM_COLUMN_WIDTH = 85;
         // LONGITUDE COLUMN
         TableColumn<ObservableAircraftState, String> longitudeColumn = new TableColumn<>("Longitude (°)");
         longitudeColumn.setCellValueFactory(param -> param.getValue().positionProperty().map(e -> {
@@ -161,7 +173,7 @@ public final class AircraftTableController {
             return formatter.format(lon);
         }));
         longitudeColumn.setComparator(numberComparator());
-        longitudeColumn.setPrefWidth(85);
+        longitudeColumn.setPrefWidth(NUM_COLUMN_WIDTH);
 
         // LATITUDE COLUMN
         TableColumn<ObservableAircraftState, String> latitudeColumn = new TableColumn<>("Latitude (°)");
@@ -172,7 +184,7 @@ public final class AircraftTableController {
             return formatter.format(lat);
         }));
         latitudeColumn.setComparator(numberComparator());
-        latitudeColumn.setPrefWidth(85);
+        latitudeColumn.setPrefWidth(NUM_COLUMN_WIDTH);
 
         // ALTITUDE COLUMN
         TableColumn<ObservableAircraftState, String> altitudeColumn = new TableColumn<>("Altitude (m)");
@@ -184,7 +196,7 @@ public final class AircraftTableController {
             return formatter.format(alt);
         }));
         altitudeColumn.setComparator(numberComparator());
-        altitudeColumn.setPrefWidth(85);
+        altitudeColumn.setPrefWidth(NUM_COLUMN_WIDTH);
 
         // SPEED COLUMN
         TableColumn<ObservableAircraftState, String> speedColumn = new TableColumn<>("Vitesse (km/h)");
@@ -196,7 +208,7 @@ public final class AircraftTableController {
             return formatter.format(speed);
         }));
         speedColumn.setComparator(numberComparator());
-        speedColumn.setPrefWidth(85);
+        speedColumn.setPrefWidth(NUM_COLUMN_WIDTH);
 
         longitudeColumn.getStyleClass().add("numeric");
         latitudeColumn.getStyleClass().add("numeric");

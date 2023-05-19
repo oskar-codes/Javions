@@ -30,23 +30,50 @@ public final class MapParameters {
         this.yMin.set(yMin);
     }
 
+    /**
+     * Getter for the zoom level property
+     * @return the zoom level property
+     */
     public ReadOnlyIntegerProperty zoomProperty() {
         return zoom;
     }
+
+    /**
+     * Getter for the zoom level
+     * @return the zoom level
+     */
     public int getZoom() {
         return zoom.get();
     }
 
+    /**
+     * Getter for the xMin property
+     * @return the xMin property
+     */
     public ReadOnlyDoubleProperty xMinProperty() {
         return xMin;
     }
+
+    /**
+     * Getter for the xMin value
+     * @return the xMin value
+     */
     public double getxMin() {
         return xMin.get();
     }
 
+    /**
+     * Getter for the yMin property
+     * @return the yMin property
+     */
     public ReadOnlyDoubleProperty yMinProperty() {
         return yMin;
     }
+
+    /**
+     * Getter for the yMin value
+     * @return the yMin value
+     */
     public double getyMin() {
         return yMin.get();
     }
@@ -62,7 +89,7 @@ public final class MapParameters {
     }
 
     /**
-     * Changes the zoom level of the map
+     * Changes the zoom level of the map. The zoom level is clamped between 6 and 19.
      * @param zoom - the zoom delta
      */
     public void changeZoomLevel(int zoom) {

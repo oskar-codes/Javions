@@ -146,17 +146,22 @@ public final class AircraftController {
                     return ColorRamp.PLASMA.at(t);
                 }, s.altitudeProperty())
         );
-        path.contentProperty().bind(
-                Bindings.createStringBinding(() -> {
-                    if (s.getAircraftData() == null)
-                        return AircraftIcon.iconFor(new AircraftTypeDesignator(""), new AircraftDescription(""), 0, WakeTurbulenceCategory.UNKNOWN).svgPath();
-                    return AircraftIcon.iconFor(s.getAircraftData().typeDesignator(), s.getAircraftData().description(), s.getCategory(), s.getAircraftData().wakeTurbulenceCategory()).svgPath();
-                })
-        );
-        path.rotateProperty().bind(
-                Bindings.createDoubleBinding(() -> Units.convertTo(s.getTrackOrHeading(), Units.Angle.DEGREE),
-                        s.trackOrHeadingProperty())
-        );
+        AircraftIcon icon;
+        if (s.getAircraftData() == null)
+            icon = AircraftIcon.iconFor(new AircraftTypeDesignator(""), new AircraftDescription(""),
+                    0, WakeTurbulenceCategory.UNKNOWN);
+        else {
+            icon = AircraftIcon.iconFor(s.getAircraftData().typeDesignator(), s.getAircraftData().description(),
+                    s.getCategory(), s.getAircraftData().wakeTurbulenceCategory());
+        }
+        path.contentProperty().set(icon.svgPath());
+
+        if (icon.canRotate()) {
+            path.rotateProperty().bind(
+                    Bindings.createDoubleBinding(() -> Units.convertTo(s.getTrackOrHeading(), Units.Angle.DEGREE),
+                            s.trackOrHeadingProperty())
+            );
+        }
         path.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             state.set(s);
             e.consume();

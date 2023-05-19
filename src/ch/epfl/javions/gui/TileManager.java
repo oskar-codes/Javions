@@ -62,7 +62,7 @@ public final class TileManager {
         if (!TileId.isValid(tileId.zoom, tileId.x, tileId.y)) {
             throw new IllegalArgumentException("Invalid tile id");
         }
-        // Retreive the image from the cache if it is present
+        // Retrieve the image from the cache if it is present
         if (cache.containsKey(tileId)) {
             return cache.get(tileId);
         }
