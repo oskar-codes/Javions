@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import java.util.ArrayList;
 
 import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.unmodifiableObservableList;
 
@@ -164,7 +165,10 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         boolean different = !position.equals(getPosition());
         if (different) {
             this.position.set(position);
-            updateTrajectory();
+            if (!isNaN(getAltitude())) {
+                lastTrajectoryAdd = getLastMessageTimeStampNs();
+                trajectory.add(new AirbornePos(position, getAltitude()));
+            }
         }
     }
 
@@ -208,7 +212,18 @@ public final class ObservableAircraftState implements AircraftStateSetter {
         boolean different = altitude != getAltitude();
         if (different) {
             this.altitude.set(altitude);
-            updateTrajectory();
+            if (getPosition() != null) {
+                if (trajectory.size() == 0) {
+                    lastTrajectoryAdd = getLastMessageTimeStampNs();
+                    trajectory.add(new AirbornePos(getPosition(), altitude));
+                    return;
+                }
+
+                if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
+                    trajectory.set(trajectory.size() - 1, new AirbornePos(getPosition(), getAltitude()));
+                    lastTrajectoryAdd = getLastMessageTimeStampNs();
+                }
+            }
         }
     }
 
@@ -258,34 +273,5 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      */
     public void setTrackOrHeading(double trackOrHeading) {
         this.trackOrHeading.set(trackOrHeading);
-    }
-
-    // TODO: write this with new method
-    /**
-     * Updates the trajectory. This method is called whenever the aircraft's position or altitude changes.
-     */
-    private void updateTrajectory() {
-//        if (!isNaN(getAltitude())) {
-//            trajectory.add(new AirbornePos(getPosition(), getAltitude()));
-//            lastTrajectoryAdd = getLastMessageTimeStampNs();
-//            return;
-//        }
-//        if (getPosition() == null) return;
-//        if (trajectory.size() == 0) {
-//            trajectory.add(new AirbornePos(getPosition(), getAltitude()));
-//            lastTrajectoryAdd = getLastMessageTimeStampNs();
-//            return;
-//        }
-//        if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
-//            trajectory.set(trajectory.size() - 1, new AirbornePos(getPosition(), getAltitude()));
-//        }
-
-        if ((trajectory.size() == 0 || !trajectory.get(trajectory.size() - 1).position.equals(getPosition())
-            ) && getPosition() != null) {
-            trajectory.add(new AirbornePos(getPosition(), getAltitude()));
-            lastTrajectoryAdd = getLastMessageTimeStampNs();
-        } else if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
-            trajectory.set(trajectory.size() - 1, new AirbornePos(getPosition(), getAltitude()));
-        }
     }
 }

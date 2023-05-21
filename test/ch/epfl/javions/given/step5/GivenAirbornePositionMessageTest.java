@@ -130,4 +130,5 @@ class GivenAirbornePositionMessageTest {
             assertNull(airbornePositionMessage);
         }
     }
+
 }

@@ -14,7 +14,7 @@ public final class MapParameters {
     private final DoubleProperty xMin = new SimpleDoubleProperty();
     private final DoubleProperty yMin = new SimpleDoubleProperty();
 
-    public final static int MIN_ZOOM = 3;
+    public final static int MIN_ZOOM = 6;
     public final static int MAX_ZOOM = 19;
 
     /**

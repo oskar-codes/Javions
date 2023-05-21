@@ -120,10 +120,10 @@ public class Main extends Application {
                         RawMessage raw = RawMessage.of(timeStampNs, bytes);
                         if (raw == null) continue;
                         int timeToWait = (int) (timeStampNs - firstMessageTimeStampNs - (now.getTime() - start.getTime()) * 1e6);
-                        if (timeToWait > 0) Thread.sleep((long) (timeToWait / 1e6), (int) (timeToWait % 1e6));
+//                        if (timeToWait > 0) Thread.sleep((long) (timeToWait / 1e6), (int) (timeToWait % 1e6));
                         messageQueue.add(raw);
                     }
-                } catch (IOException | InterruptedException ignored) {}
+                } catch (IOException ignored) {}
             } else {
                 // Read from stdin
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(System.in))) {

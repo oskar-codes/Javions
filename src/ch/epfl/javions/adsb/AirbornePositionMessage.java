@@ -45,16 +45,6 @@ public record AirbornePositionMessage(long timeStampNs,
     }
 
     /**
-     * Returns 1 if the bit is set, 0 otherwise.
-     * @param data the data
-     * @param bit the bit
-     * @return 1 if the bit is set, 0 otherwise
-     */
-    private static int bitValue(long data, int bit) {
-        return Bits.testBit(data, bit) ? 1 : 0;
-    }
-
-    /**
      * Returns the value corresponding to the given gray code.
      * @param v the gray code
      * @return the value corresponding to the given gray code
@@ -80,25 +70,24 @@ public record AirbornePositionMessage(long timeStampNs,
         long altitudeData = extractUInt(data, 36, 12);
         double altitude;
 
-        int Q = bitValue(altitudeData, 4);
-        if (Q == 1) {
-            long n = ((altitudeData & 0b111111100000) >>> 1) | (altitudeData & 0b1111);
+        boolean Q = Bits.testBit(altitudeData, 4);
+        if (Q) {
+            Bits.extractUInt(data, 36, 12);
+            long n = (((long)Bits.extractUInt(altitudeData, 5, 7) << 4 | (Bits.extractUInt(altitudeData, 0 , 4))));
             altitude = Units.convertFrom(-1000 + 25 * n, Units.Length.FOOT);
         } else {
-            // Manually untangle the bits
-            // TODO: find a better way to do this
-            long untangled = (long) bitValue(altitudeData, 4) << 11
-                    | (long) bitValue(altitudeData, 2) << 10
-                    | (long) bitValue(altitudeData, 0) << 9
-                    | (long) bitValue(altitudeData, 10) << 8
-                    | (long) bitValue(altitudeData, 8) << 7
-                    | (long) bitValue(altitudeData, 6) << 6
-                    | (long) bitValue(altitudeData, 5) << 5
-                    | (long) bitValue(altitudeData, 3) << 4
-                    | (long) bitValue(altitudeData, 1) << 3
-                    | (long) bitValue(altitudeData, 11) << 2
-                    | (long) bitValue(altitudeData, 9) << 1
-                    | (long) bitValue(altitudeData, 7);
+
+            long untangled = 0;
+            int bitIndex = 7;
+            for (int i = 0; i < 12; i++) {
+                // Extract the current bit from the input using bitwise operations and set it in the untangled value
+                untangled += (Bits.testBit(altitudeData, bitIndex) ? 1 : 0) << i;
+
+                // Update the bit index for the next iteration
+                // The indices follow: [7, 9, 11, 1, 3, 5, 6, 8, 10, 0, 2, 4]
+                if (bitIndex == 5) bitIndex -= 1;
+                bitIndex = (bitIndex + 2) % 12;
+            }
 
             long least = gray(untangled & 0b111);
             long most = gray(untangled >>> 3);
@@ -112,8 +101,8 @@ public record AirbornePositionMessage(long timeStampNs,
         long lonData = extractUInt(data, 0, 17);
         long latData = extractUInt(data, 17, 17);
 
-        double x = lonData / Math.pow(2, 17);
-        double y = latData / Math.pow(2, 17);
+        double x = Math.scalb(lonData, -17);
+        double y = Math.scalb(latData, -17);
 
         return new AirbornePositionMessage(message.timeStampNs(), message.icaoAddress(), altitude, parity, x, y);
     }

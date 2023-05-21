@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
 public final class TileManager {
     private final Path diskPath;
     private final String serverDomain;
+    private final int MAX_CACHE_SIZE = 100;
 
-    // TODO: check if the least recently used tile is removed from the cache
-    private final LinkedHashMap<TileId, Image> cache = new LinkedHashMap<>(100, 1, true);
+    private final LinkedHashMap<TileId, Image> cache = new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true);
 
     /**
      * Constructs a {@code TileManager} with the given disk path and server domain.
@@ -51,17 +51,14 @@ public final class TileManager {
         /**
          * Checks if the tile id is valid.
          * @param zoom the zoom level. Must be between 6 and 19 (inclusive).
-         * @param x the x coordinate. Must be between 0 and 4^zoom - 1 (inclusive).
-         * @param y the y coordinate. Must be between 0 and 4^zoom - 1 (inclusive).
+         * @param x the x coordinate. Must be between 0 and 2^zoom - 1 (inclusive).
+         * @param y the y coordinate. Must be between 0 and 2^zoom - 1 (inclusive).
          * @return true if the tile id is valid, false otherwise
          */
         public static boolean isValid(int zoom, int x, int y) {
-            // TODO: check which condition clause is better
-            return
-                    MapParameters.MIN_ZOOM <= zoom && zoom <= MapParameters.MAX_ZOOM &&
-                                            x >= 0 && x < 1L << (zoom * 2) &&
-                                            y >= 0 && y < Math.pow(4, zoom);
-//                                            x >= 0 && x < Math.pow(4, zoom) &&
+            return zoom > 0 &&
+                   x >= 0 && x < 1 << zoom &&
+                   y >= 0 && y < 1 << zoom;
         }
     }
 
@@ -72,7 +69,6 @@ public final class TileManager {
      */
     public Image imageForTileAt(TileId tileId) {
         if (!TileId.isValid(tileId.zoom, tileId.x, tileId.y)) {
-            System.out.println(tileId.x);
             throw new IllegalArgumentException("Invalid tile id");
         }
         // Retrieve the image from the cache if it is present
@@ -85,7 +81,7 @@ public final class TileManager {
         Path fullPath = Path.of(path.toString(), tileId.y() + ".png");
         if (Files.exists(fullPath)) {
             Image image = new Image(fullPath.toUri().toString());
-            cache.put(tileId, image);
+            addToCache(tileId, image);
             return image;
         }
 
@@ -101,11 +97,23 @@ public final class TileManager {
                     writer.write(bytes);
                 }
                 Image image = new Image(new ByteArrayInputStream(bytes));
-                cache.put(tileId, image);
+                addToCache(tileId, image);
                 return image;
             }
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    /**
+     * Adds the given image to the cache. If the cache is full, the least recently used image is removed.
+     * @param id the tile id
+     * @param image the image
+     */
+    private void addToCache(TileId id, Image image) {
+        cache.put(id, image);
+        if (cache.size() > MAX_CACHE_SIZE) {
+            cache.remove(cache.keySet().iterator().next());
         }
     }
 }

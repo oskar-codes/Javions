@@ -1,20 +1,26 @@
 package ch.epfl.javions.gui;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.stage.Stage;
+import org.junit.Test;
 
-import java.nio.file.Path;
+import java.util.LinkedHashMap;
 
-public final class TestTileManager extends Application {
-    public static void main(String[] args) { launch(args); }
+public final class TestTileManager {
 
-    @Override
-    public void start(Stage primaryStage) {
-        TileManager.TileId id = new TileManager.TileId(12, 4000, 3000);
-        new TileManager(Path.of("tile-cache"),
-                "tile.openstreetmap.org")
-                .imageForTileAt(id);
-        Platform.exit();
+    @Test
+    public void test() {
+        final LinkedHashMap<String, String> cache = new LinkedHashMap<>(5, 1, true);
+
+        cache.put("1", "1");
+        cache.put("2", "2");
+        cache.put("3", "3");
+        cache.put("4", "4");
+        cache.put("5", "5");
+        System.out.println(cache);
+        cache.get("1");
+        System.out.println(cache);
+        cache.put("6", "6");
+        System.out.println(cache);
+        cache.remove(cache.keySet().iterator().next());
+        System.out.println(cache);
     }
 }
