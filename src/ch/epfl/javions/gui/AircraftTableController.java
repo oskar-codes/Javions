@@ -13,6 +13,7 @@ import javafx.scene.input.MouseButton;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -117,50 +118,40 @@ public final class AircraftTableController {
 
         // REGISTRATION COLUMN
         TableColumn<ObservableAircraftState, String> registrationColumn = new TableColumn<>("Immatriculation");
-        registrationColumn.setCellValueFactory(param -> {
-
-            return param.getValue().getAircraftData() == null ?
-                    new ReadOnlyObjectWrapper<>("") :
-                    new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().registration().string());
-
-//            if (param.getValue().getAircraftData() == null) {
-//                return new ReadOnlyObjectWrapper<>("");
-//            }
-//            return new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().registration().string());
-        });
+        registrationColumn.setCellValueFactory(param -> param.getValue().getAircraftData() == null ?
+                new ReadOnlyObjectWrapper<>("") :
+                new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().registration().string())
+        );
         registrationColumn.setPrefWidth(90);
 
         // MODEL COLUMN
         TableColumn<ObservableAircraftState, String> modelColumn = new TableColumn<>("Modèle");
-        modelColumn.setCellValueFactory(param -> {
-            if (param.getValue().getAircraftData() == null) {
-                return new ReadOnlyObjectWrapper<>("");
-            }
-            return new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().model());
-        });
+        modelColumn.setCellValueFactory(param ->
+                param.getValue().getAircraftData() == null ?
+                new ReadOnlyObjectWrapper<>("") :
+                new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().model())
+        );
         modelColumn.setPrefWidth(230);
 
         // TYPE COLUMN
         TableColumn<ObservableAircraftState, String> typeColumn = new TableColumn<>("Type");
-        typeColumn.setCellValueFactory(param -> {
-            if (param.getValue().getAircraftData() == null) {
-                return new ReadOnlyObjectWrapper<>("");
-            }
-            return new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().typeDesignator().string());
-        });
+        typeColumn.setCellValueFactory(param ->
+                param.getValue().getAircraftData() == null ?
+                new ReadOnlyObjectWrapper<>("") :
+                new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().typeDesignator().string())
+        );
         typeColumn.setPrefWidth(50);
 
         // DESCRIPTION COLUMN
         TableColumn<ObservableAircraftState, String> descriptionColumn = new TableColumn<>("Description");
-        descriptionColumn.setCellValueFactory(param -> {
-            if (param.getValue().getAircraftData() == null) {
-                return new ReadOnlyObjectWrapper<>("");
-            }
-            return new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().description().string());
-        });
+        descriptionColumn.setCellValueFactory(param ->
+                param.getValue().getAircraftData() == null ?
+                new ReadOnlyObjectWrapper<>("") :
+                new ReadOnlyObjectWrapper<>(param.getValue().getAircraftData().description().string())
+        );
         descriptionColumn.setPrefWidth(70);
 
-        // TODO: constants, ternary, throws
+        // TODO: constants, throws
 
         /* ### NUMBER COLUMNS ### */
         final int NUM_COLUMN_WIDTH = 85;
@@ -215,7 +206,7 @@ public final class AircraftTableController {
         altitudeColumn.getStyleClass().add("numeric");
         speedColumn.getStyleClass().add("numeric");
 
-        table.getColumns().addAll(
+        table.getColumns().addAll(List.of(
                 icaoAddressColumn,
                 callSignColumn,
                 registrationColumn,
@@ -226,7 +217,7 @@ public final class AircraftTableController {
                 latitudeColumn,
                 altitudeColumn,
                 speedColumn
-        );
+        ));
     }
 
     /**
