@@ -133,8 +133,6 @@ public final class BaseMapController {
         int startY = yMin >>> 8;
         GraphicsContext ctx = this.canvas.getGraphicsContext2D();
 
-        // TODO: fix drawing on the border of the map
-
         for (int x = 0; x < canvas.getWidth() / 256 + 1; x++) {
             for (int y = 0; y < canvas.getHeight() / 256 + 1; y++) {
 

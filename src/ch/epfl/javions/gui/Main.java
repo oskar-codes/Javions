@@ -119,11 +119,12 @@ public class Main extends Application {
                         assert bytesRead == RawMessage.LENGTH;
                         RawMessage raw = RawMessage.of(timeStampNs, bytes);
                         if (raw == null) continue;
+                        // TODO: fix time to wait
                         int timeToWait = (int) (timeStampNs - firstMessageTimeStampNs - (now.getTime() - start.getTime()) * 1e6);
-//                        if (timeToWait > 0) Thread.sleep((long) (timeToWait / 1e6), (int) (timeToWait % 1e6));
+                        if (timeToWait > 0) Thread.sleep((long) (timeToWait / 1e6), (int) (timeToWait % 1e6));
                         messageQueue.add(raw);
                     }
-                } catch (IOException ignored) {}
+                } catch (IOException | InterruptedException ignored) {}
             } else {
                 // Read from stdin
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(System.in))) {
@@ -138,6 +139,8 @@ public class Main extends Application {
         decoder.setDaemon(true);
         decoder.start();
 
+        Date start = new Date();
+
         // Animation timer for updating the aircraft states
         new AnimationTimer() {
             private double previous = Double.NEGATIVE_INFINITY;
@@ -149,6 +152,15 @@ public class Main extends Application {
                     if (m == null) return;
                     slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
                     asm.updateWithMessage(m);
+
+                    if (slc.messageCountProperty().get() == 650) {
+                        Date end = new Date();
+                        long time = end.getTime() - start.getTime();
+                        System.out.println("Time in seconds: " + time / 1000.0);
+                        System.out.println("Messages: " + slc.messageCountProperty().get());
+                        System.out.println("Messages per second: " + slc.messageCountProperty().get() / (time / 1000.0));
+                        System.exit(0);
+                    }
 
                     // Purge the aircraft states every second
                     if (nowNs / 1e9 - previous / 1e9 >= 1) {
