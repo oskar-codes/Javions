@@ -7,6 +7,9 @@ package ch.epfl.javions.adsb;
  * @author Eddy Rashed (360667)
  */
 public final class MessageParser {
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private MessageParser() {}
 
     /**

@@ -11,10 +11,13 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Eddy Rashed (360667)
  */
 public final class CprDecoder {
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private CprDecoder() {}
 
-    public final static double ZP0 = 60;
-    public final static double ZP1 = 59;
+    private final static double ZP0 = 60;
+    private final static double ZP1 = 59;
 
     /**
      * Decodes the position of an aircraft.
