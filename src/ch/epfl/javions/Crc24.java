@@ -11,6 +11,9 @@ public final class Crc24 {
      * The default generator used for the CRC-24 calculation
      */
     public static final int GENERATOR = 0xFFF409; // 1111_1111_1111_0100_0000_1001
+    /**
+     * The size of the lookup table
+     */
     private static final int SIZE = 256;
 
     // Table for the crc method, generated with the crc_bitwise method in buildTable

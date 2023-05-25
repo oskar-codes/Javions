@@ -15,8 +15,17 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Eddy Rashed (360667)
  */
 public record RawMessage(long timeStampNs, ByteString bytes) {
+    /**
+     * The length of a raw message in bytes.
+     */
     public static final int LENGTH = 14;
+    /**
+     * The CRC decoder used to check the CRC of the message.
+     */
     private static final Crc24 CRC_DECODER = new Crc24(Crc24.GENERATOR);
+    /**
+     * The format string used to zero fill the ICAO address.
+     */
     private static final String ZERO_FILL = "%06X";
 
     /**

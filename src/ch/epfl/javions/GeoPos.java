@@ -9,6 +9,9 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  */
 public record GeoPos(int longitudeT32, int latitudeT32) {
+    /**
+     The maximum latitude in T32
+     */
     private final static int MAX_LATITUDE_T32 = 1 << 30;
     /**
      * Creates a new GeoPos

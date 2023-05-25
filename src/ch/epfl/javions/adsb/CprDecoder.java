@@ -65,12 +65,12 @@ public final class CprDecoder {
             double x1T32 = Units.convert(x1, Units.Angle.TURN, Units.Angle.T32);
             int resultX1 = (int) Math.round(x0T32);
             int resultY1 = (int) Math.round(p0T32);
-            int resultX2 = (int) Math.round(x1T32);
-            int resultY2 = (int) Math.round(p1T32);
             if (mostRecent == 0) {
                 if (!GeoPos.isValidLatitudeT32(resultY1)) return null;
                 return new GeoPos(resultX1, resultY1);
             }
+            int resultX2 = (int) Math.round(x1T32);
+            int resultY2 = (int) Math.round(p1T32);
             if (!GeoPos.isValidLatitudeT32(resultY2)) return null;
             return new GeoPos(resultX2, resultY2);
         }
@@ -90,12 +90,12 @@ public final class CprDecoder {
 
         int resultX1 = (int) Math.round(lam0T32);
         int resultY1 = (int) Math.round(p0T32);
-        int resultX2 = (int) Math.round(lam1T32);
-        int resultY2 = (int) Math.round(p1T32);
         if (mostRecent == 0) {
             if (!GeoPos.isValidLatitudeT32(resultY1)) return null;
             return new GeoPos(resultX1, resultY1);
         }
+        int resultX2 = (int) Math.round(lam1T32);
+        int resultY2 = (int) Math.round(p1T32);
         if (!GeoPos.isValidLatitudeT32(resultY2)) return null;
         return new GeoPos(resultX2, resultY2);
     }

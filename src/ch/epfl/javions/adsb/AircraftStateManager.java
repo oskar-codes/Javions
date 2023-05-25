@@ -35,7 +35,7 @@ public final class AircraftStateManager {
     }
 
     /**
-     * Updates the aircraft state with the given message.
+     * Updates the aircraft state with the given message. If the aircraft state does not exist, it is created.
      * @param message the message
      * @throws IOException if an I/O error occurs
      */

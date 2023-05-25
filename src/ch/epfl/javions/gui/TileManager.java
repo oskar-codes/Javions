@@ -27,7 +27,10 @@ import java.util.LinkedHashMap;
 public final class TileManager {
     private final Path diskPath;
     private final String serverDomain;
-    private final int MAX_CACHE_SIZE = 100;
+    /**
+     * The maximum size of the cache in memory.
+     */
+    private static final int MAX_CACHE_SIZE = 100;
 
     private final LinkedHashMap<TileId, Image> cache = new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true);
 
@@ -47,7 +50,7 @@ public final class TileManager {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    record TileId(int zoom, int x, int y) {
+     record TileId(int zoom, int x, int y) {
         /**
          * Checks if the tile id is valid.
          * @param zoom the zoom level. Must be between 6 and 19 (inclusive).

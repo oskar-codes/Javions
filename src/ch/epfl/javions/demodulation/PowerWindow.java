@@ -12,6 +12,9 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Eddy Rashed (360667)
  */
 public class PowerWindow {
+    /**
+     * The size of a batch of power samples.
+     */
     public static final int BATCH_SIZE = 1 << 16;
     private final int windowSize;
     private long position;

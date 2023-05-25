@@ -1,6 +1,5 @@
 package ch.epfl.javions.gui;
 
-import ch.epfl.javions.Math2;
 import javafx.beans.property.*;
 
 /**
@@ -10,12 +9,19 @@ import javafx.beans.property.*;
  * @author Eddy Rashed (360667)
  */
 public final class MapParameters {
+    /**
+     * The minimum zoom level.
+     */
+    public final static int MIN_ZOOM = 6;
+    /**
+     * The maximum zoom level.
+     */
+    public final static int MAX_ZOOM = 19;
+
     private final IntegerProperty zoom = new SimpleIntegerProperty();
     private final DoubleProperty xMin = new SimpleDoubleProperty();
     private final DoubleProperty yMin = new SimpleDoubleProperty();
 
-    public final static int MIN_ZOOM = 6;
-    public final static int MAX_ZOOM = 19;
 
     /**
      * Constructs a new MapParameters object with the given zoom level and the given xMin and yMin coordinates
@@ -96,10 +102,10 @@ public final class MapParameters {
      * @param zoom - the zoom delta
      */
     public void changeZoomLevel(int zoom) {
-        int previousZoom = getZoom();
-        this.zoom.set(Math2.clamp(MIN_ZOOM, getZoom() + zoom, MAX_ZOOM));
-        if (previousZoom == getZoom()) return;
+        int newZoom = getZoom() + zoom;
+        if (newZoom < MIN_ZOOM || newZoom > MAX_ZOOM) return;
 
+        this.zoom.set(newZoom);
         this.xMin.set(Math.scalb(getxMin(), zoom));
         this.yMin.set(Math.scalb(getyMin(), zoom));
     }

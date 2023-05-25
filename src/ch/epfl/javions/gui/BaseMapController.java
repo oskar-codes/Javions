@@ -22,12 +22,15 @@ import static javafx.scene.Cursor.DEFAULT;
  * @author Oskar Zanota (361595)
  */
 public final class BaseMapController {
+    /**
+     * The size of a tile in pixels.
+     */
+    private final static int TILE_SIZE = 256;
     private final TileManager tileManager;
     private final MapParameters mapParameters;
     private final Pane pane;
     private final Canvas canvas;
     private boolean redrawNeeded = true;
-    private final static int TILE_SIZE = 256;
 
     /**
      * Creates a new BaseMapController.

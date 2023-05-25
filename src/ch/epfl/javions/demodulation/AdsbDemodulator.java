@@ -12,8 +12,11 @@ import java.io.InputStream;
  * @author Eddy Rashed (360667)
  */
 public class AdsbDemodulator {
-    private final PowerWindow window;
+    /**
+     * The size of the ADS-B message in bytes.
+     */
     private final static int SIZE = 14;
+    private final PowerWindow window;
     private final byte[] byteMessage;
     private long time = 0;
 

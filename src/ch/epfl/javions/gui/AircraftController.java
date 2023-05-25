@@ -31,13 +31,13 @@ import static javafx.scene.paint.CycleMethod.NO_CYCLE;
 
 /**
  * Controller for the aircraft.
- *
  * @author Oskar Zanota (361595)
  * @author Eddy Rashed (360667)
  */
 public final class AircraftController {
     // Labels only appear when zoomed in past this threshold
     private static final int LABEL_ZOOM_THRESHOLD = 11;
+    private static final int RECT_PADDING = 4;
     private final MapParameters mapParameters;
     private final ObjectProperty<ObservableAircraftState> state;
     private final Pane pane;
@@ -76,7 +76,7 @@ public final class AircraftController {
 
     //      #######       NODE ARCHITECTURE       #######
     //
-    //                  Group#OACI
+    //                    Group#OACI
     //                    /       \
     //                   /         \
     //                  /           \
@@ -188,12 +188,10 @@ public final class AircraftController {
         Rectangle rect = new Rectangle();
         Text txt = new Text();
 
-        final int rectPadding = 4;
-
         rect.widthProperty().bind(
-                txt.layoutBoundsProperty().map(b -> b.getWidth() + rectPadding));
+                txt.layoutBoundsProperty().map(b -> b.getWidth() + RECT_PADDING));
         rect.heightProperty().bind(
-                txt.layoutBoundsProperty().map(b -> b.getHeight() + rectPadding));
+                txt.layoutBoundsProperty().map(b -> b.getHeight() + RECT_PADDING));
         txt.textProperty().bind(
                 Bindings.createStringBinding(() -> {
                     String identifier = s.getAircraftData() != null ?
@@ -205,7 +203,6 @@ public final class AircraftController {
                     if (Double.isNaN(s.getVelocity())) {
                         speed = "?";
                     } else {
-                        // Convert m/s to km/h
                         speed = String.valueOf(
                                 (int) Units.convertTo(s.getVelocity(), Units.Speed.KILOMETER_PER_HOUR)
                         );
@@ -216,7 +213,6 @@ public final class AircraftController {
                     } else {
                         altitude = String.valueOf((int) s.getAltitude());
                     }
-
                     return identifier + "\n" + speed + "km/h\u2002" + altitude + "m";
                 }, s.altitudeProperty(), s.velocityProperty(), s.callSignProperty())
         );

@@ -11,8 +11,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  */
 public final class ColorRamp {
     private final Color[] colors;
-    // TODO: check this list of color ramps: https://bids.github.io/colormap/
-    // Plasma color ramp from https://bids.github.io/colormap/
+    // Default plasma color ramp from https://bids.github.io/colormap/
     public static final ColorRamp PLASMA = new ColorRamp(
             Color.valueOf("0x0d0887ff"), Color.valueOf("0x220690ff"),
             Color.valueOf("0x320597ff"), Color.valueOf("0x40049dff"),

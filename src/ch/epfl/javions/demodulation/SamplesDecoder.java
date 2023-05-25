@@ -12,10 +12,13 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Eddy Rashed (360667)
  */
 public final class SamplesDecoder {
+    /**
+     * The offset of the samples.
+     */
+    private static final int OFFSET = 2048;
     private final InputStream stream;
     private final int batchSize;
     private final byte[] bytes;
-    private static final int OFFSET = 2048;
 
     /**
      * Constructs a new SamplesDecoder.

@@ -27,6 +27,14 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
     private static final int AS_SIZE = 10;
     private static final int HDG_POSITION = 11;
     private static final int HDG_SIZE = 10;
+
+    /**
+     * Creates a new AirborneVelocityMessage.
+     * @param timeStampNs the time at which the message was received.
+     * @param icaoAddress the ICAO address of the aircraft.
+     * @param speed the speed of the aircraft.
+     * @param trackOrHeading the track or heading of the aircraft.
+     */
     public AirborneVelocityMessage {
         if (icaoAddress == null) throw new NullPointerException("ICAO address is null");
         checkArgument(timeStampNs >= 0 && speed >= 0 && trackOrHeading >= 0);
@@ -34,7 +42,6 @@ public record AirborneVelocityMessage(long timeStampNs, IcaoAddress icaoAddress,
 
     /**
      * Creates an AirborneVelocityMessage from a RawMessage.
-     *
      * @param rawMessage the RawMessage to decode.
      * @return the decoded AirborneVelocityMessage.
      */
