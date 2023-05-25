@@ -36,7 +36,9 @@ import static javafx.scene.paint.CycleMethod.NO_CYCLE;
  * @author Eddy Rashed (360667)
  */
 public final class AircraftController {
-    // Labels only appear when zoomed in past this threshold
+    /**
+     * Labels only appear when zoomed in past this threshold
+      */
     private static final int LABEL_ZOOM_THRESHOLD = 11;
     private final MapParameters mapParameters;
     private final ObjectProperty<ObservableAircraftState> state;

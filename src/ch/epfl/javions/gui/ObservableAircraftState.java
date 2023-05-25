@@ -27,8 +27,7 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      * @param position the position
      * @param altitude the altitude
      */
-    public record AirbornePos(GeoPos position, double altitude) {
-    }
+    public record AirbornePos(GeoPos position, double altitude) {}
 
     private final IcaoAddress icaoAddress;
     private final AircraftData aircraftData;
@@ -162,14 +161,14 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      * @param position - the aircraft's position
      */
     public void setPosition(GeoPos position) {
-        boolean different = !position.equals(getPosition());
-        if (different) {
-            this.position.set(position);
-            if (!isNaN(getAltitude())) {
-                lastTrajectoryAdd = getLastMessageTimeStampNs();
-                trajectory.add(new AirbornePos(position, getAltitude()));
-            }
-        }
+        if (position.equals(getPosition())) return;
+
+        this.position.set(position);
+
+        if (isNaN(getAltitude())) return;
+
+        lastTrajectoryAdd = getLastMessageTimeStampNs();
+        trajectory.add(new AirbornePos(position, getAltitude()));
     }
 
     /**
@@ -209,21 +208,20 @@ public final class ObservableAircraftState implements AircraftStateSetter {
      * @param altitude - the aircraft's altitude
      */
     public void setAltitude(double altitude) {
-        boolean different = altitude != getAltitude();
-        if (different) {
-            this.altitude.set(altitude);
-            if (getPosition() != null) {
-                if (trajectory.size() == 0) {
-                    lastTrajectoryAdd = getLastMessageTimeStampNs();
-                    trajectory.add(new AirbornePos(getPosition(), altitude));
-                    return;
-                }
+        if (altitude == getAltitude()) return;
+        this.altitude.set(altitude);
 
-                if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
-                    trajectory.set(trajectory.size() - 1, new AirbornePos(getPosition(), getAltitude()));
-                    lastTrajectoryAdd = getLastMessageTimeStampNs();
-                }
-            }
+        if (getPosition() == null) return;
+
+        if (trajectory.size() == 0) {
+            lastTrajectoryAdd = getLastMessageTimeStampNs();
+            trajectory.add(new AirbornePos(getPosition(), altitude));
+            return;
+        }
+
+        if (getLastMessageTimeStampNs() == lastTrajectoryAdd) {
+            trajectory.set(trajectory.size() - 1, new AirbornePos(getPosition(), getAltitude()));
+            lastTrajectoryAdd = getLastMessageTimeStampNs();
         }
     }
 

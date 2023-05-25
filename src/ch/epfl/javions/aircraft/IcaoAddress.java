@@ -11,7 +11,9 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  */
 public record IcaoAddress(String string) {
-    // Pattern to check if the string is a valid ICAO address
+    /**
+      * Pattern to check if the string is a valid ICAO address
+      */
     private static final Pattern PATTERN = Pattern.compile("[0-9A-F]{6}");
 
     /**

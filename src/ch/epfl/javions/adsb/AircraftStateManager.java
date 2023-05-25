@@ -47,7 +47,8 @@ public final class AircraftStateManager {
                 states.add(table.get(address).stateSetter());
             }
         } else {
-            AircraftStateAccumulator<ObservableAircraftState> obj = new AircraftStateAccumulator<>(new ObservableAircraftState(address, database.get(address)));
+            AircraftStateAccumulator<ObservableAircraftState> obj =
+                    new AircraftStateAccumulator<>(new ObservableAircraftState(address, database.get(address)));
             obj.update(message);
             table.put(address, obj);
             if (obj.stateSetter().getPosition() != null) {
@@ -62,6 +63,7 @@ public final class AircraftStateManager {
      */
     public void purge(Message message) {
         states.removeIf(state -> state.getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
-        table.entrySet().removeIf(entry -> entry.getValue().stateSetter().getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
+        table.entrySet().removeIf(entry ->
+                entry.getValue().stateSetter().getLastMessageTimeStampNs() < message.timeStampNs() - 60 * 1e9);
     }
 }
