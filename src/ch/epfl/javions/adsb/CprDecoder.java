@@ -29,9 +29,6 @@ public final class CprDecoder {
      * @return the decoded position as a GeoPos
      */
     public static GeoPos decodePosition(double x0, double y0, double x1, double y1, int mostRecent) {
-
-        // TODO: latitude non centrée
-
         checkArgument(mostRecent == 0 || mostRecent == 1);
 
         double zLat = Math.rint(y0 * ZP1 - y1 * ZP0);
@@ -45,7 +42,7 @@ public final class CprDecoder {
         double p0Rad = Units.convertFrom(p0, Units.Angle.TURN);
         double p1Rad = Units.convertFrom(p1, Units.Angle.TURN);
 
-        double p0T32 = Units.convert(p0, Units.Angle.TURN, Units.Angle.T32);
+        double p0T32 = Units.convert(p0 - (p0 > Units.Angle.TURN / 2 ? Units.Angle.TURN : 0), Units.Angle.TURN, Units.Angle.T32);
         double p1T32 = Units.convert(p1, Units.Angle.TURN, Units.Angle.T32);
 
         double A1 = Math.acos(
@@ -64,13 +61,13 @@ public final class CprDecoder {
 
         if (ZL0 == 1) {
             double x0T32 = Units.convert(x0, Units.Angle.TURN, Units.Angle.T32);
-            double x1T32 = Units.convert(x1, Units.Angle.TURN, Units.Angle.T32);
             int resultX1 = (int) Math.round(x0T32);
             int resultY1 = (int) Math.round(p0T32);
             if (mostRecent == 0) {
                 if (!GeoPos.isValidLatitudeT32(resultY1)) return null;
                 return new GeoPos(resultX1, resultY1);
             }
+            double x1T32 = Units.convert(x1, Units.Angle.TURN, Units.Angle.T32);
             int resultX2 = (int) Math.round(x1T32);
             int resultY2 = (int) Math.round(p1T32);
             if (!GeoPos.isValidLatitudeT32(resultY2)) return null;
