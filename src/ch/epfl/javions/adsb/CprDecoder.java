@@ -11,8 +11,7 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Eddy Rashed (360667)
  */
 public final class CprDecoder {
-    private CprDecoder() {
-    }
+    private CprDecoder() {}
 
     public final static double ZP0 = 60;
     public final static double ZP1 = 59;

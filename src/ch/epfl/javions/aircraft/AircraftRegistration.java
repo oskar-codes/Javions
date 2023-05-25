@@ -11,7 +11,9 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  */
 public record AircraftRegistration(String string) {
-    // The pattern for the registration of an aircraft
+    /**
+     * The pattern for the registration of an aircraft
+      */
     private static final Pattern PATTERN = Pattern.compile("[A-Z0-9 .?/_+-]+");
 
     /**

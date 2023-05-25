@@ -32,7 +32,8 @@ public final class TileManager {
      */
     private static final int MAX_CACHE_SIZE = 100;
 
-    private final LinkedHashMap<TileId, Image> cache = new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true);
+    private final LinkedHashMap<TileId, Image> cache =
+            new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true);
 
     /**
      * Constructs a {@code TileManager} with the given disk path and server domain.

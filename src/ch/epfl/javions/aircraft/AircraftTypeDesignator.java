@@ -11,7 +11,9 @@ import static ch.epfl.javions.Preconditions.checkArgument;
  * @author Oskar Zanota (361595)
  */
 public record AircraftTypeDesignator(String string) {
-    // The pattern for the aircraft type designator
+    /**
+     * The pattern for the aircraft type designator
+      */
     private static final Pattern PATTERN = Pattern.compile("[A-Z0-9]{2,4}");
 
     /**
