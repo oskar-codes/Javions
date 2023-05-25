@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -104,7 +103,6 @@ public class Main extends Application {
                 String fileName = getParameters().getRaw().get(0);
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
                     byte[] bytes = new byte[RawMessage.LENGTH];
-                    Date start = new Date();
                     long lastTimeStampNs = 0;
                     while (true) {
                         long timeStampNs = s.readLong();
@@ -132,8 +130,6 @@ public class Main extends Application {
         });
         decoder.setDaemon(true);
         decoder.start();
-
-        Date start = new Date();
 
         // Animation timer for updating the aircraft states
         new AnimationTimer() {
