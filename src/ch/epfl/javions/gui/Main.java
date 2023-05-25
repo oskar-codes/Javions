@@ -104,25 +104,19 @@ public class Main extends Application {
                 String fileName = getParameters().getRaw().get(0);
                 try (DataInputStream s = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
                     byte[] bytes = new byte[RawMessage.LENGTH];
-                    long firstMessageTimeStampNs = 0;
                     Date start = new Date();
-                    boolean first = true;
+                    long lastTimeStampNs = 0;
                     while (true) {
                         long timeStampNs = s.readLong();
-                        Date now = new Date();
-                        if (first) {
-                            firstMessageTimeStampNs = timeStampNs;
-                            now = start;
-                            first = false;
-                        }
                         int bytesRead = s.readNBytes(bytes, 0, bytes.length);
                         assert bytesRead == RawMessage.LENGTH;
                         RawMessage raw = RawMessage.of(timeStampNs, bytes);
                         if (raw == null) continue;
                         // TODO: fix time to wait
-                        int timeToWait = (int) (timeStampNs - firstMessageTimeStampNs - (now.getTime() - start.getTime()) * 1e6);
-                        if (timeToWait > 0) Thread.sleep((long) (timeToWait / 1e6), (int) (timeToWait % 1e6));
+                        int timeToWait = (int) ((timeStampNs - lastTimeStampNs) / 1e6);
+                        if (timeToWait > 0) Thread.sleep(timeToWait);
                         messageQueue.add(raw);
+                        lastTimeStampNs = timeStampNs;
                     }
                 } catch (IOException | InterruptedException ignored) {}
             } else {
@@ -144,6 +138,7 @@ public class Main extends Application {
         // Animation timer for updating the aircraft states
         new AnimationTimer() {
             private double previous = Double.NEGATIVE_INFINITY;
+
             @Override
             public void handle(long nowNs) {
                 try {
@@ -153,14 +148,14 @@ public class Main extends Application {
                     slc.messageCountProperty().set(slc.messageCountProperty().get() + 1);
                     asm.updateWithMessage(m);
 
-                    if (slc.messageCountProperty().get() == 650) {
-                        Date end = new Date();
-                        long time = end.getTime() - start.getTime();
-                        System.out.println("Time in seconds: " + time / 1000.0);
-                        System.out.println("Messages: " + slc.messageCountProperty().get());
-                        System.out.println("Messages per second: " + slc.messageCountProperty().get() / (time / 1000.0));
-                        System.exit(0);
-                    }
+//                    if (slc.messageCountProperty().get() == 650) {
+//                        Date end = new Date();
+//                        long time = end.getTime() - start.getTime();
+//                        System.out.println("Time in seconds: " + time / 1000.0);
+//                        System.out.println("Messages: " + slc.messageCountProperty().get());
+//                        System.out.println("Messages per second: " + slc.messageCountProperty().get() / (time / 1000.0));
+//                        System.exit(0);
+//                    }
 
                     // Purge the aircraft states every second
                     if (nowNs / 1e9 - previous / 1e9 >= 1) {

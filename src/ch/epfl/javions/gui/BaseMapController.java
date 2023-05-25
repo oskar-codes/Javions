@@ -27,6 +27,7 @@ public final class BaseMapController {
     private final Pane pane;
     private final Canvas canvas;
     private boolean redrawNeeded = true;
+    private final static int TILE_SIZE = 256;
 
     /**
      * Creates a new BaseMapController.
@@ -133,8 +134,8 @@ public final class BaseMapController {
         int startY = yMin >>> 8;
         GraphicsContext ctx = this.canvas.getGraphicsContext2D();
 
-        for (int x = 0; x < canvas.getWidth() / 256 + 1; x++) {
-            for (int y = 0; y < canvas.getHeight() / 256 + 1; y++) {
+        for (int x = 0; x < canvas.getWidth() / TILE_SIZE + 1; x++) {
+            for (int y = 0; y < canvas.getHeight() / TILE_SIZE + 1; y++) {
 
                 if (!TileManager.TileId.isValid(mapParameters.getZoom(), startX + x, startY + y)) continue;
 
@@ -147,8 +148,8 @@ public final class BaseMapController {
 
                 // Draws the image on the canvas
                 ctx.drawImage(
-                        image, x * 256 - (xMin % 256),
-                               y * 256 - (yMin % 256));
+                        image, x * TILE_SIZE - (xMin % TILE_SIZE),
+                               y * TILE_SIZE - (yMin % TILE_SIZE));
             }
         }
     }
