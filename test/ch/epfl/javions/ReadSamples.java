@@ -1,10 +1,10 @@
 package ch.epfl.javions;
 
-import ch.epfl.javions.adsb.AircraftStateManager;
 import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.adsb.MessageParser;
 import ch.epfl.javions.adsb.RawMessage;
 import ch.epfl.javions.aircraft.AircraftDatabase;
+import ch.epfl.javions.gui.AircraftStateManager;
 import ch.epfl.javions.gui.ObservableAircraftState;
 import org.junit.jupiter.api.Test;
 

@@ -54,7 +54,6 @@ public class PowerComputer {
         int start = Math.max(read - 8, 0);
         int count = read - start;
 
-        // TODO: avoid using System.arraycopy
         // Save the last 8 samples for the next batch
         if (read - start >= 0) System.arraycopy(result, start, saved, SAVED_SIZE - count, count);
 

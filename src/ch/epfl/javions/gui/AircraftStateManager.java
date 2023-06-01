@@ -1,8 +1,9 @@
-package ch.epfl.javions.adsb;
+package ch.epfl.javions.gui;
 
+import ch.epfl.javions.adsb.AircraftStateAccumulator;
+import ch.epfl.javions.adsb.Message;
 import ch.epfl.javions.aircraft.AircraftDatabase;
 import ch.epfl.javions.aircraft.IcaoAddress;
-import ch.epfl.javions.gui.ObservableAircraftState;
 import javafx.collections.ObservableSet;
 
 import java.io.IOException;

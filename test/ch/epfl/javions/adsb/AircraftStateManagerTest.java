@@ -2,6 +2,7 @@ package ch.epfl.javions.adsb;
 
 import ch.epfl.javions.ByteString;
 import ch.epfl.javions.aircraft.AircraftDatabase;
+import ch.epfl.javions.gui.AircraftStateManager;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

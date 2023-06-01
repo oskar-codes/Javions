@@ -75,9 +75,6 @@ public final class Crc24 {
         byte[] augmented = new byte[message.length + 3];
         System.arraycopy(message, 0, augmented, 0, message.length);
 
-        // TODO: efficient algorithm
-        // And use Byte.SIZE instead of 8
-
         // Calculates the CRC-24 of the augmented message
         int crc = 0;
         for (byte o : augmented) {

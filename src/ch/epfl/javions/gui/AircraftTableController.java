@@ -151,8 +151,6 @@ public final class AircraftTableController {
         );
         descriptionColumn.setPrefWidth(70);
 
-        // TODO: constants, throws
-
         /* ### NUMBER COLUMNS ### */
         final int NUM_COLUMN_WIDTH = 85;
         // LONGITUDE COLUMN
